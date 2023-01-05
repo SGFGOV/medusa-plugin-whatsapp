@@ -1,12 +1,12 @@
 {
-  "name": "medusa-plugin-starter-ts",
-  "version": "1.0.0",
+  "name": "medusa-plugin-whatsapp",
+  "version": "1.0.1",
   "description": "A plugin starter for medusa using typescript and pre-configured",
   "main": "index.js",
   "types": "index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/adrien2p/medusa-plugin-starter-ts"
+    "url": "https://github.com/SGFGOV/medusa-plugin-whatsapp"
   },
   "keywords": [
     "medusa",
@@ -17,7 +17,7 @@
     "ecommerce",
     "e-commerce"
   ],
-  "author": "Adrien de Peretti <adrien.deperetti@gmail.com>",
+  "author": "Govind Diwakar <govind.diwakar@gmail.com>",
   "license": "MIT",
   "scripts": {
     "clean": "./node_modules/.bin/rimraf services/ models/ migrations/ api/ subscribers/ index.js index.map.js",

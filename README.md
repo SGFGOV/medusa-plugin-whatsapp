@@ -16,51 +16,39 @@
 Installation
 
 ```bash
-git clone git@github.com:adrien2p/medusa-plugin-starter-ts.git
+yarn add medusa-plugin-whatsapp
 ```
 
 # Usage
 
 ## Api
 
-### Admin routes
+## Configuration
 
-Those routes will automatically be attached by medusa to the `admin` path.
+set the following environment variables. Please use production codes, Test codes don't work with the whatsapp sandbox
 
-### Store routes
+TWILIO_AUTH_SID= <your twilio auth code> // it begins with AC
+TWILIO_AUTH_TOKEN= <your twilio auth token>
 
-Those routes will automatically be attached by medusa to the `store` path.
+#### Only for testing
+TEST_SEND_NUMBER= <sandbox number>
+TEST_RECIEVER_NUMBER= <your sandbox member number>
 
-### Custom routes
+### in medusa-config.js
 
-All those routes are added in the main router and you have to manage them.
-
-## Models/Migrations
-
-Those models will be attach to the manager and included into the medusa container.
-The migrations will be applied automatically.
-
-## Subscribers
-
-It acts like a service but its main purpose is to extends core flow depending on the
-events you want to listen to.
-
-## Services
-
-Those services will be automatically added to the medusa container and will be available
-in any other service through the constructor injection.
-
-## Loaders
-
-Those will be applied during the loading and allow you to register custom components
-to the container to be accessible later on.
-
-# Deployment
-
-Once your plugin is done. 
-
-```bash
-npm run build && npm version && npm publish
+add to your plugins list
 ```
+///...other plugins
+  {
+     resolve:"medusa-plugin-whatsapp":
+    {
+      options:{
+      account_sid: process.env.TWILIO_AUTH_SID,
+      auth_token: process.env.TWILIO_AUTH_TOKEN,
+      whatsappHandlerInterface:"nameOftheHandlerService"
+      }
+    }
 
-You can now install it into your project file `medusa-config`.
+  }
+
+```

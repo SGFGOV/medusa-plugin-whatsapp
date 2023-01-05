@@ -12,17 +12,17 @@ export interface WhatsappInterfaceServiceParams {
   logger: Logger;
 }
 
-export type WhatsappHandlerInterface<T> = {
+export interface WhatsappHandlerInterface<T> {
   whatsappHandler: (
-    scope: MedusaContainer,
+    container: MedusaContainer,
     body: T
   ) => Promise<MessagingResponse>;
-};
+}
 
-export interface WhatsappInterfaceOptions<T> {
+export interface WhatsappInterfaceOptions {
   account_sid: string;
   auth_token: string;
-  whatsappHandlerInterface: WhatsappHandlerInterface<T>;
+  whatsappHandlerInterface: string;
 }
 
 export type ErrorCallBack = (error: Error | null, item: MessageInstance) => any;
@@ -33,10 +33,10 @@ export class WhatsappInterfaceService extends TransactionBaseService {
   protected transactionManager_: EntityManager;
   eventBusService: EventBusService;
   twilioClient: twilio.Twilio;
-  options: WhatsappInterfaceOptions<unknown>;
+  options: WhatsappInterfaceOptions;
   constructor(
     container: WhatsappInterfaceServiceParams,
-    options: WhatsappInterfaceOptions<unknown>
+    options: WhatsappInterfaceOptions
   ) {
     super(container);
     this.manager_ = container.manager;
@@ -64,14 +64,14 @@ export class WhatsappInterfaceService extends TransactionBaseService {
     return cloned as this;
   }
 
-  async processReceivedMessage(
-    scope: MedusaContainer,
-    body: unknown
+  async processReceivedMessage<T>(
+    container: MedusaContainer,
+    body: T
   ): Promise<MessagingResponse> {
-    const result = await this.options.whatsappHandlerInterface.whatsappHandler(
-      scope,
-      body
-    );
+    const whatsappHandler = container.resolve(
+      this.options.whatsappHandlerInterface
+    ) as WhatsappHandlerInterface<T>;
+    const result = await whatsappHandler.whatsappHandler(container, body);
     await this.atomicPhase_(async (manager) => {
       return await this.eventBusService
         .withTransaction(manager)
@@ -80,6 +80,15 @@ export class WhatsappInterfaceService extends TransactionBaseService {
 
     return result;
   }
+  /**
+   *
+   * @param sender - senders phone number in iso format "eg: +1xxxxxxxx"
+   * @param receiver - receiver phone number in iso format "eg: +1xxxxxxxx"
+   * @param message - the text message
+   * @param otherOptions - other twilio params
+   * @param error  an error call back
+   * @returns
+   */
 
   async sendTextMessage(
     sender: string,
