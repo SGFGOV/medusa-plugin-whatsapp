@@ -22,3 +22,4 @@ index.*
 ./tsconfig.tsbuildinfo
 ./package-lock.json
 ./yarn.json
+*.tgz
