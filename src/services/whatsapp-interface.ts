@@ -119,3 +119,5 @@ export class WhatsappInterfaceService extends TransactionBaseService {
     }
   }
 }
+
+export default WhatsappInterfaceService;

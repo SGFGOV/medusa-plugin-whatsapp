@@ -1,6 +1,6 @@
 {
   "name": "medusa-plugin-whatsapp",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "description": "A plugin starter for medusa using typescript and pre-configured",
   "main": "index.js",
   "types": "index.d.ts",
