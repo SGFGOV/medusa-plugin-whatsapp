@@ -33,6 +33,9 @@ describe("WhatsappService", () => {
         {
           account_sid: TWILIO_ACCOUNT_SID,
           auth_token: TWILIO_ACCOUNT_TOKEN,
+          medusaServerHost: "localhost",
+          medusaServerPort: "9000",
+          medusaServerProtocol: "http",
           whatsappHandlerInterface: jest.fn().mockReturnValue({
             whatsappHandlerInterface: async (
               scope: MedusaContainer,

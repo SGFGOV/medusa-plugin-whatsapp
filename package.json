@@ -20,7 +20,7 @@
   "author": "Govind Diwakar <govind.diwakar@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "clean": "./node_modules/.bin/rimraf services/ models/ migrations/ api/ subscribers/ index.js index.map.js",
+    "clean": "./node_modules/.bin/rimraf services/ models/ migrations/ api/ utils/ subscribers/ index.js index.map.js",
     "build": "npm run clean && tsc -p tsconfig.json",
     "watch": "tsc --watch",
     "test": "jest"

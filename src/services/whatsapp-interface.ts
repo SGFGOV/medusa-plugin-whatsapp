@@ -23,6 +23,9 @@ export interface WhatsappInterfaceOptions {
   account_sid: string;
   auth_token: string;
   whatsappHandlerInterface: string;
+  medusaServerHost: string;
+  medusaServerPort: string;
+  medusaServerProtocol: string;
 }
 
 export type ErrorCallBack = (error: Error | null, item: MessageInstance) => any;

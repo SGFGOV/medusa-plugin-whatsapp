@@ -4,10 +4,15 @@ import cors from "cors";
 import { getConfigFile } from "medusa-core-utils";
 
 import middlewares from "../middleware";
+import { WhatsappInterfaceOptions } from "../../services/whatsapp-interface";
 
 const route = Router();
 
-export default (app: Router, rootDirectory: string): Router => {
+export default (
+  app: Router,
+  rootDirectory: string,
+  options: WhatsappInterfaceOptions
+): Router => {
   const whatsappPath = "/whatsapp-message";
   app.use(whatsappPath, route);
 
@@ -17,6 +22,8 @@ export default (app: Router, rootDirectory: string): Router => {
   };
 
   route.options(whatsappPath, cors(corsOptions));
+  // route.options(whatsappPath, middlewares.verifyTwilioHeader);
+  route.post(whatsappPath, middlewares.verifyTwilioHeader(options));
   route.post(
     whatsappPath,
     cors(corsOptions),
