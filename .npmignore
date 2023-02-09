@@ -4,5 +4,6 @@ node_modules
 .env*
 src
 coverage
+*.tgz
 
 tsconfig.tsbuildinfo
