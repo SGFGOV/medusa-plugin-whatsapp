@@ -12,8 +12,7 @@ export default async (
     ) as WhatsappInterfaceService;
     const responeMessage: MessagingResponse =
       await service.processReceivedMessage(req.scope, req.body);
-      res.send(responeMessage.toString());
-    return res.sendStatus(200);
+    res.send(responeMessage.toString());
   } catch (err) {
     return res.status(400).json({ message: err.message });
   }
