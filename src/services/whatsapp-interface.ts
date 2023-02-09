@@ -1,11 +1,10 @@
 import { EventBusService, TransactionBaseService } from "@medusajs/medusa";
 import { Logger, MedusaContainer } from "@medusajs/medusa/dist/types/global";
-import { default as twilio } from "twilio";
+import twilio from "twilio";
 import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
 import { EntityManager } from "typeorm";
 import MessagingResponse from "twilio/lib/twiml/MessagingResponse";
 import { MessageListInstanceCreateOptions } from "twilio/lib/rest/api/v2010/account/message";
-import { Client } from "twilio/lib/twiml/VoiceResponse";
 export interface WhatsappInterfaceServiceParams {
   manager: EntityManager;
   eventBusService: EventBusService;

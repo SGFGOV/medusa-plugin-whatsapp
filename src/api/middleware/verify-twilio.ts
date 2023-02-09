@@ -6,15 +6,19 @@ export default (options: WhatsappInterfaceOptions) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const twilioSignature = req.headers["x-twilio-signature"];
     const params = req.body;
-    const url = `${options.medusaServerProtocol}://${options.medusaServerHost}:${options.medusaServerProtocol}/whatsapp-message`;
+    let requestIsValid = false;
+    if (!params || params?.length == 0) {
+      requestIsValid = false;
+    } else {
+      const url = `${options.medusaServerProtocol}://${options.medusaServerHost}:${options.medusaServerPort}/whatsapp/received`;
 
-    const requestIsValid = twilio.validateRequest(
-      process.env.TWILIO_AUTH_TOKEN,
-      twilioSignature as string,
-      url,
-      params
-    );
-
+      requestIsValid = twilio.validateRequest(
+        process.env.TWILIO_AUTH_TOKEN,
+        twilioSignature as string,
+        url,
+        params
+      );
+    }
     if (!requestIsValid) {
       return res.status(401).send("Unauthorized");
     } else {

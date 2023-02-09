@@ -21,4 +21,6 @@ async function getSignature(
   );
 }
 
+export default getSignature;
+
 export { getSignature };

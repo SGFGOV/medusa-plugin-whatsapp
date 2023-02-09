@@ -1,6 +1,6 @@
 {
   "name": "medusa-plugin-whatsapp",
-  "version": "1.0.5",
+  "version": "1.0.14",
   "description": "A plugin to integrate with medusa with whatsapp",
   "main": "index.js",
   "types": "index.d.ts",
@@ -23,13 +23,14 @@
     "clean": "./node_modules/.bin/rimraf services/ models/ migrations/ api/ utils/ subscribers/ index.js index.map.js",
     "build": "npm run clean && tsc -p tsconfig.json",
     "watch": "tsc --watch",
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "devDependencies": {
     "@medusajs/medusa": "^1.7.2",
     "@types/express": "^4.17.13",
     "@types/jest": "^27.4.0",
     "@types/node": "^17.0.15",
+    "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^5.41.0",
     "@typescript-eslint/parser": "^5.41.0",
     "add": "^2.0.6",
