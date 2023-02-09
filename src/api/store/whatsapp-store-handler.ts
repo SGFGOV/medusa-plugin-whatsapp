@@ -3,7 +3,7 @@ import * as bodyParser from "body-parser";
 
 export default (): Router => {
   const app = Router();
-  /*app.use(bodyParser.json());
+  /* app.use(bodyParser.json());
 
   app.get(
     "/whatsapp-message",
