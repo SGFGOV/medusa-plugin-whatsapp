@@ -16,8 +16,7 @@ const TWILIO_ACCOUNT_TOKEN = config.parsed?.TWILIO_AUTH_TOKEN ?? "dummy";
 const TEST_TWILIO_SANDBOX_NUMBER =
   config.parsed?.TEST_SEND_NUMBER ??
   "00000"; /* the number you created the sandbox with */
-const TEST_RECIEVER_NUMBER =
-  config.parsed?.TEST_RECIEVER_NUMBER ?? TEST_TWILIO_SANDBOX_NUMBER;
+const TEST_RECEIVER_NUMBER = config.parsed?.TEST_RECIEVER_NUMBER;
 const TEST_MESSAGE = "Your verification code is 11234";
 
 describe("WhatsappService", () => {
@@ -50,7 +49,7 @@ describe("WhatsappService", () => {
 
     it("initiate-sandbox", async () => {
       const sender = TEST_TWILIO_SANDBOX_NUMBER;
-      const reciever = TEST_TWILIO_SANDBOX_NUMBER; /* sandbox member number */
+      const reciever = TEST_RECEIVER_NUMBER; /* sandbox member number */
       const message = TEST_MESSAGE;
       const result = await myWhatsappService.sendTextMessage(
         sender,

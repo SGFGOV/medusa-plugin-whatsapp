@@ -1,11 +1,10 @@
-const crypto = await import("node:crypto");
-
 async function getSignature(
   authToken: string,
   url: string,
   params: any
 ): Promise<string> {
   // get all request parameters
+  const crypto = await import("node:crypto");
   const data = Object.keys(params)
     // sort them
     .sort()
