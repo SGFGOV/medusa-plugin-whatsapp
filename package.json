@@ -1,6 +1,6 @@
 {
   "name": "medusa-plugin-whatsapp",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "A plugin to integrate with medusa with whatsapp",
   "main": "index.js",
   "types": "index.d.ts",
