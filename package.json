@@ -15,7 +15,10 @@
     "typescript",
     "plugin",
     "ecommerce",
-    "e-commerce"
+    "e-commerce",
+    "whastaspp",
+    "messaging",
+    "notifications"
   ],
   "author": "Govind Diwakar <govind.diwakar@gmail.com>",
   "license": "MIT",
