@@ -36,5 +36,5 @@ jobs:
         #working-directory: ./
         run: yarn run build  
       - name: 'run unit tests'
-        #working-directory: ./
+        working-directory: ./services
         run: yarn run test
