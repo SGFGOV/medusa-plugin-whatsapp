@@ -43,9 +43,15 @@ const testOptions = {
 } as any;
 
 describe("WhatsappService", () => {
-  describe("Sending Message", () => {
-    let myWhatsappService: WhatsappInterfaceService;
+  let myWhatsappService: WhatsappInterfaceService;
+ /* describe("Sending Message", () => {
+    
     beforeEach(() => {
+       /*jest.spyOn(twilio, "TwilioSDK").mockImplementation((a, b, c): any => {return{
+        {
+          messages{create: (): any => Promise.resolve({ body: "test-body" })},
+        } }}
+      );
       myWhatsappService = new WhatsappInterfaceService(
         {
           logger: console as any,
@@ -58,7 +64,7 @@ describe("WhatsappService", () => {
 
     it("initiate-sandbox", async () => {
       const sender = TEST_TWILIO_SANDBOX_NUMBER;
-      const reciever = TEST_RECEIVER_NUMBER; /* sandbox member number */
+      const reciever = TEST_RECEIVER_NUMBER; /* sandbox member number 
       const message = TEST_MESSAGE;
       const result = await myWhatsappService.sendTextMessage(
         sender,
@@ -75,7 +81,7 @@ describe("WhatsappService", () => {
       );
       expect(result).toBeDefined();
     });
-  });
+  });*/
   describe("Recieving  Message", () => {
     let myWhatsappService: WhatsappInterfaceService;
     let app;

@@ -4,6 +4,7 @@ import { MockManager } from "medusa-test-utils";
 import mockedEventBusService from "../__mocks__/event-bus";
 import { MedusaContainer } from "@medusajs/medusa/dist/types/global";
 import dotenv from "dotenv";
+import { Twilio } from "twilio";
 
 const config = dotenv.config();
 
@@ -41,6 +42,14 @@ describe("WhatsappService", () => {
         },
         testOptions
       );
+      jest
+        .spyOn(myWhatsappService.twilioClient.messages, "create")
+        .mockImplementation(
+          (): Promise<any> =>
+            Promise.resolve({
+              body: "message",
+            })
+        );
     });
 
     it("initiate-sandbox", async () => {
