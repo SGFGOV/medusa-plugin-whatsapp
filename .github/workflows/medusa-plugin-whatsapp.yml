@@ -39,6 +39,6 @@ jobs:
           TWILIO_AUTH_SID: ${{secrets.TWILIO_AUTH_SID}}
           TWILIO_AUTH_TOKEN: ${{secrets.TWILIO_AUTH_TOKEN}}
           TEST_SEND_NUMBER: ${{secrets.TEST_SEND_NUMBER}}
-          TEST_RECIEVER_NUMBER: $${{secrets.TEST_RECIEVER_NUMBER}}
+          TEST_RECEIVER_NUMBER: $${{secrets.TEST_RECEIVER_NUMBER}}
         working-directory: ../medusa-plugin-whatsapp
         run: yarn run test

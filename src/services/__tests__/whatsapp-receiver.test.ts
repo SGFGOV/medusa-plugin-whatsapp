@@ -24,7 +24,7 @@ const TWILIO_ACCOUNT_TOKEN = config.parsed?.TWILIO_AUTH_TOKEN ?? "dummy";
 const TEST_TWILIO_SANDBOX_NUMBER =
   config.parsed?.TEST_SEND_NUMBER ??
   "00000"; /* the number you created the sandbox with */
-const TEST_RECEIVER_NUMBER = config.parsed?.TEST_RECIEVER_NUMBER;
+const TEST_RECEIVER_NUMBER = config.parsed?.TEST_RECEIVER_NUMBER;
 const TEST_MESSAGE = "Your verification code is 11234";
 const whatsappHandlerInterface = jest.fn().mockReturnValue({
   whatsappHandler: async (scope: MedusaContainer, body: unknown) => {
