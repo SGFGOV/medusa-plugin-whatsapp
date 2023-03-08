@@ -30,9 +30,11 @@ jobs:
           node-version: ${{ matrix.node-verion }}
 
       - name: 'yarn install'
-        working-directory: ./
+        #working-directory: ./
         run: yarn
-
+      - name: 'run build'
+        #working-directory: ./
+        run: yarn run build  
       - name: 'run unit tests'
-        working-directory: ./
+        #working-directory: ./
         run: yarn run test
