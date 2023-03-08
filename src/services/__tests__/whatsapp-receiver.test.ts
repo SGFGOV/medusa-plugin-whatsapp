@@ -66,7 +66,11 @@ describe("WhatsappService", () => {
         message,
         undefined,
         (error, done) => {
-          console.log(error);
+          if (error) {
+            console.log(error);
+          } else {
+            return done;
+          }
         }
       );
       expect(result).toBeDefined();

@@ -53,15 +53,19 @@ describe("WhatsappService", () => {
 
     it("initiate-sandbox", async () => {
       const sender = TEST_TWILIO_SANDBOX_NUMBER;
-      const reciever = TEST_RECEIVER_NUMBER; /* sandbox member number */
+      const receiver = TEST_RECEIVER_NUMBER; /* sandbox member number */
       const message = TEST_MESSAGE;
       const result = await myWhatsappService.sendTextMessage(
         sender,
-        reciever,
+        receiver,
         message,
         undefined,
         (error, done) => {
-          console.log(error);
+          if (error) {
+            console.log(error);
+          } else {
+            return done;
+          }
         }
       );
       expect(result).toBeDefined();

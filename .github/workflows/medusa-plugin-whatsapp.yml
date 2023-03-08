@@ -28,7 +28,6 @@ jobs:
         uses: actions/setup-node@v3.1.1
         with:
           node-version: ${{ matrix.node-verion }}
-
       - name: 'yarn install'
         #working-directory: ./
         run: yarn
@@ -36,5 +35,10 @@ jobs:
         #working-directory: ./
         run: yarn run build  
       - name: 'run unit tests'
+        env:
+          TWILIO_AUTH_SID: ${{secrets.TWILIO_AUTH_SID}}
+          TWILIO_AUTH_TOKEN: ${{secrets.TWILIO_AUTH_TOKEN}}
+          TEST_SEND_NUMBER: ${{secrets.TEST_SEND_NUMBER}}
+          TEST_RECIEVER_NUMBER: $${{secrets.TEST_RECIEVER_NUMBER}}
         working-directory: ../medusa-plugin-whatsapp
         run: yarn run test
