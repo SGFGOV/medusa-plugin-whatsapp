@@ -1,4 +1,4 @@
-#Medusa-Plugin-Whatsapp
+# Medusa-Plugin-Whatsapp
 
 Bring two poplar platforms together
 
@@ -13,6 +13,12 @@ yarn add medusa-plugin-whatsapp
 # Usage
 
 ## Api
+
+Configure the sandbox webhook to point to http://yourserver/whatsapp/received
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
+
 
 ## Configuration
 
