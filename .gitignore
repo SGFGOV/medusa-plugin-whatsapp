@@ -19,7 +19,7 @@ index.*
 utils/
 src/coverage
 
-
+!src/services
 
 ./tsconfig.tsbuildinfo
 ./package-lock.json
