@@ -1,9 +1,10 @@
 import { EventBusService, TransactionBaseService } from "@medusajs/medusa";
 import { Logger, MedusaContainer } from "@medusajs/medusa/dist/types/global";
-import twilio from "twilio";
+import twilio, { RequestClient } from "twilio";
 import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
 import { EntityManager } from "typeorm";
 import MessagingResponse from "twilio/lib/twiml/MessagingResponse";
+import PrismClient from "../libs/prism-client";
 import { MessageListInstanceCreateOptions } from "twilio/lib/rest/api/v2010/account/message";
 export interface WhatsappInterfaceServiceParams {
   manager: EntityManager;
@@ -43,7 +44,18 @@ export class WhatsappInterfaceService extends TransactionBaseService {
     super(container);
     this.manager_ = container.manager;
     this.eventBusService = container.eventBusService;
-    this.twilioClient = twilio(options.account_sid, options.auth_token);
+
+    if (options.account_sid != "ACDummy") {
+      this.twilioClient = twilio(options.account_sid, options.auth_token);
+    } else {
+      this.twilioClient = twilio(options.account_sid, options.auth_token, {
+        accountSid: options.account_sid,
+        httpClient: new PrismClient(
+          "http://127.0.0.1:4010",
+          new RequestClient()
+        ) as any,
+      });
+    }
     this.options = options;
     this.logger = container.logger;
   }

@@ -28,7 +28,10 @@ jobs:
         uses: actions/setup-node@v3.1.1
         with:
           node-version: ${{ matrix.node-verion }}
-
+      - name: 'install prism'
+        run: |
+          yarn global add @stoplight/prism-cli
+          prism mock https://raw.githubusercontent.com/twilio/twilio-oai/main/spec/json/twilio_api_v2010.json
       - name: 'yarn install'
         #working-directory: ./
         run: yarn

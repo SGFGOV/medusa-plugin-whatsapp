@@ -6243,11 +6243,6 @@ pkg-dir@^4.2.0:
   dependencies:
     find-up "^4.0.0"
 
-pop-iterate@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/pop-iterate/-/pop-iterate-1.0.1.tgz#ceacfdab4abf353d7a0f2aaa2c1fc7b3f9413ba3"
-  integrity sha512-HRCx4+KJE30JhX84wBN4+vja9bNfysxg1y28l0DuJmkoaICiv2ZSilKddbS48pq50P8d2erAhqDLbp47yv3MbQ==
-
 postgres-array@~2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/postgres-array/-/postgres-array-2.0.0.tgz#48f8fce054fbc69671999329b8834b772652d82e"
@@ -6363,15 +6358,6 @@ punycode@^2.1.0, punycode@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==
-
-q@2.0.x:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/q/-/q-2.0.3.tgz#75b8db0255a1a5af82f58c3f3aaa1efec7d0d134"
-  integrity sha512-gv6vLGcmAOg96/fgo3d9tvA4dJNZL3fMyBqVRrGxQ+Q/o4k9QzbJ3NQF9cOO/71wRodoXhaPgphvMFU68qVAJQ==
-  dependencies:
-    asap "^2.0.0"
-    pop-iterate "^1.0.1"
-    weak-map "^1.0.5"
 
 qs@6.11.0, qs@^6.11.0, qs@^6.9.4:
   version "6.11.0"
@@ -6613,11 +6599,6 @@ rimraf@^3.0.0, rimraf@^3.0.2:
   integrity sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==
   dependencies:
     glob "^7.1.3"
-
-rootpath@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/rootpath/-/rootpath-0.1.2.tgz#5b379a87dca906e9b91d690a599439bef267ea6b"
-  integrity sha512-R3wLbuAYejpxQjL/SjXo1Cjv4wcJECnMRT/FlcCfTwCBhaji9rWaRCoVEQ1SPiTJ4kKK+yh+bZLAV7SCafoDDw==
 
 run-async@^2.4.0:
   version "2.4.1"
@@ -7253,19 +7234,16 @@ tsutils@^3.21.0:
   dependencies:
     tslib "^1.8.1"
 
-twilio@^3.84.0:
-  version "3.84.0"
-  resolved "https://registry.yarnpkg.com/twilio/-/twilio-3.84.0.tgz#57e035a7034e4c278cdd03d3e88c05f507b9d84e"
-  integrity sha512-XL+RR1SdfGExC51cE22unM/r7lEFzfDYUA3FecHEe5cLF+LzxmZGB9O9BXfqZu/sZ5YlGeltJfMA5j3TRLzhLw==
+twilio@^4.8.0:
+  version "4.8.0"
+  resolved "https://registry.yarnpkg.com/twilio/-/twilio-4.8.0.tgz#1ad333b8a3abfc813c69101a827f23ddc52cef68"
+  integrity sha512-jJaEyFGIiIAIfAWyq94g3uo2odTyo2opRN8hzpDHpbA4SYDfhxmm4E+Z0c7AP41HEdxzDyCwMkLNXh6fBpWRiw==
   dependencies:
     axios "^0.26.1"
     dayjs "^1.8.29"
     https-proxy-agent "^5.0.0"
-    jsonwebtoken "^8.5.1"
-    lodash "^4.17.21"
-    q "2.0.x"
+    jsonwebtoken "^9.0.0"
     qs "^6.9.4"
-    rootpath "^0.1.2"
     scmp "^2.1.0"
     url-parse "^1.5.9"
     xmlbuilder "^13.0.2"
@@ -7522,11 +7500,6 @@ wcwidth@^1.0.1:
   integrity sha512-XHPEwS0q6TaxcvG85+8EYkbiCux2XtWG2mkc47Ng2A77BQu9+DqIOJldST4HgPkuea7dvKSj5VgX3P1d4rW8Tg==
   dependencies:
     defaults "^1.0.3"
-
-weak-map@^1.0.5:
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/weak-map/-/weak-map-1.0.8.tgz#394c18a9e8262e790544ed8b55c6a4ddad1cb1a3"
-  integrity sha512-lNR9aAefbGPpHO7AEnY0hCFjz1eTkWCXYvkTRrTHs9qv8zJp+SkVYpzfLIFXQQiG3tVvbNFQgVg2bQS8YGgxyw==
 
 webidl-conversions@^3.0.0:
   version "3.0.1"
