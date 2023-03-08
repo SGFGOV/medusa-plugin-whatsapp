@@ -1,15 +1,6 @@
-<!--lint disable awesome-list-item-->
-<div align="center">
-  <p align="center">
-    <img alt="Medusa" src="https://uploads-ssl.webflow.com/61fba9f6deac297b7b22017d/62000006ce573a706c92546c_logo.svg" width="200" />
-  </p>
-  <h1>Plugin starter (Typescript)</h1>
-  <p>Send and receive whatsapp message from twilio</p>
-    
-  <a href="https://github.com/adrien2p/awesome-medusajs">
-      <img src="https://awesome.re/badge.svg" alt="Awesome">
-  </a>
-</div>
+#Medusa-Plugin-Whatsapp
+
+Bring two poplar platforms together
 
 # Getting started
 
