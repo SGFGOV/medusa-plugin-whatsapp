@@ -20,7 +20,7 @@ const config = dotenv.config();
 const TWILIO_ACCOUNT_SID =
   config.parsed?.TWILIO_AUTH_SID ||
   "ACDummy"; /* user production keys when testing with sandbox */
-const TWILIO_ACCOUNT_TOKEN = config.parsed?.TWILIO_AUTH_TOKEN ?? "dummy";
+const TWILIO_ACCOUNT_TOKEN = config.parsed?.TWILIO_AUTH_TOKEN ?? "bla-bla-bla";
 const TEST_TWILIO_SANDBOX_NUMBER =
   config.parsed?.TEST_SEND_NUMBER ??
   "00000"; /* the number you created the sandbox with */
@@ -167,7 +167,7 @@ describe("WhatsappService", () => {
         NumSegments: "1",
         ReferralNumMedia: "0",
         MessageSid: "SM91234567890123456789012345678901",
-        AccountSid: "AC91234567890123456789012345678901",
+        AccountSid: TWILIO_ACCOUNT_SID,
         From: "whatsapp:+1234567899",
         ApiVersion: "2010-04-01",
       };

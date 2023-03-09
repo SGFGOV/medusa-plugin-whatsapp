@@ -13,7 +13,7 @@ export default (options: WhatsappInterfaceOptions) => {
       const url = `${options.medusaServerProtocol}://${options.medusaServerHost}:${options.medusaServerPort}/whatsapp/received`;
 
       requestIsValid = twilio.validateRequest(
-        process.env.TWILIO_AUTH_TOKEN,
+        options.auth_token,
         twilioSignature as string,
         url,
         params
