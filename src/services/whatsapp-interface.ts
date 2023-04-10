@@ -5,6 +5,7 @@ import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
 import { EntityManager } from "typeorm";
 import MessagingResponse from "twilio/lib/twiml/MessagingResponse";
 import { MessageListInstanceCreateOptions } from "twilio/lib/rest/api/v2010/account/message";
+import { NotificationProvider } from "@medusajs/medusa/dist/models/notification-provider";
 export interface WhatsappInterfaceServiceParams {
   manager: EntityManager;
   eventBusService: EventBusService;
@@ -29,7 +30,10 @@ export interface WhatsappInterfaceOptions {
 
 export type ErrorCallBack = (error: Error | null, item: MessageInstance) => any;
 
-export class WhatsappInterfaceService extends TransactionBaseService {
+export class WhatsappInterfaceService
+  extends TransactionBaseService
+  implements NotificationProvider
+{
   logger: Logger;
   protected manager_: EntityManager;
   protected transactionManager_: EntityManager;
@@ -46,7 +50,11 @@ export class WhatsappInterfaceService extends TransactionBaseService {
     this.twilioClient = twilio(options.account_sid, options.auth_token);
     this.options = options;
     this.logger = container.logger;
+    this.id = "whatsapp";
+    this.is_installed = true;
   }
+  id: string;
+  is_installed: boolean;
 
   withTransaction(transactionManager?: EntityManager): this {
     if (!transactionManager) {

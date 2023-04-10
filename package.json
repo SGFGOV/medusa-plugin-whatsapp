@@ -18,7 +18,8 @@
     "e-commerce",
     "whastaspp",
     "messaging",
-    "notifications"
+    "notifications",
+    "medusa-plugin"
   ],
   "author": "Govind Diwakar <govind.diwakar@gmail.com>",
   "license": "MIT",
