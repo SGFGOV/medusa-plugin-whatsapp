@@ -67,7 +67,7 @@
     "medusa-core-utils": "^1.1.31",
     "medusa-test-utils": "^1.1.37",
     "twilio": "^3.84.0",
-    "typeorm": "0.2"
+    "typeorm": "0.3.14"
   },
   "jest": {
     "globals": {
