@@ -8,7 +8,11 @@ import { MockManager } from "medusa-test-utils";
 import mockedEventBusService from "../__mocks__/event-bus";
 import { MedusaContainer } from "@medusajs/medusa/dist/types/global";
 import dotenv from "dotenv";
-import { mockServer } from "../__mocks__/service.mocks";
+import {
+  cartServiceMock,
+  mockServer,
+  orderServiceMock,
+} from "../__mocks__/service.mocks";
 import { asFunction, createContainer } from "awilix";
 import whatsAppRoutes from "../../api";
 import getSignature from "../../utils/generate-signature";
@@ -44,7 +48,7 @@ const testOptions = {
 
 describe("WhatsappService", () => {
   let myWhatsappService: WhatsappInterfaceService;
- /* describe("Sending Message", () => {
+  /* describe("Sending Message", () => {
     
     beforeEach(() => {
        /*jest.spyOn(twilio, "TwilioSDK").mockImplementation((a, b, c): any => {return{
@@ -91,6 +95,18 @@ describe("WhatsappService", () => {
           logger: console as any,
           eventBusService: mockedEventBusService() as any,
           manager: MockManager,
+          orderService: orderServiceMock as any,
+          cartService: cartServiceMock as any,
+          storeService: undefined,
+          returnService: undefined,
+          giftCardService: undefined,
+          swapService: undefined,
+          lineItemService: undefined,
+          fulfillmentProviderService: undefined,
+          fulfillmentService: undefined,
+          claimService: undefined,
+          totalsService: undefined,
+          productVariantService: undefined,
         },
         testOptions
       );

@@ -5,6 +5,7 @@ import mockedEventBusService from "../__mocks__/event-bus";
 import { MedusaContainer } from "@medusajs/medusa/dist/types/global";
 import dotenv from "dotenv";
 import { Twilio } from "twilio";
+import { orderServiceMock, cartServiceMock } from "../__mocks__/service.mocks";
 
 const config = dotenv.config();
 
@@ -39,6 +40,18 @@ describe("WhatsappService", () => {
           logger: console as any,
           eventBusService: mockedEventBusService as any,
           manager: MockManager,
+          orderService: orderServiceMock as any,
+          cartService: cartServiceMock as any,
+          storeService: undefined,
+          returnService: undefined,
+          giftCardService: undefined,
+          swapService: undefined,
+          lineItemService: undefined,
+          fulfillmentProviderService: undefined,
+          fulfillmentService: undefined,
+          claimService: undefined,
+          totalsService: undefined,
+          productVariantService: undefined,
         },
         testOptions
       );

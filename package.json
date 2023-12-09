@@ -30,7 +30,7 @@
     "test": "jest --coverage"
   },
   "devDependencies": {
-    "@medusajs/medusa": "^1.7.2",
+    "@medusajs/medusa": "^1.18.0",
     "@types/express": "^4.17.13",
     "@types/jest": "^27.4.0",
     "@types/node": "^17.0.15",
