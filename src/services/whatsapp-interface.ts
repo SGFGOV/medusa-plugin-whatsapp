@@ -525,22 +525,30 @@ export class WhatsappInterfaceService extends AbstractNotificationService {
     const currencyCode = order.currency_code.toUpperCase();
 
     const items = await Promise.all(
-      order.items.map(async (i: any) => {
-        i.totals = await this.totalsService_.getLineItemTotals(i, order, {
-          include_tax: true,
-          use_tax_lines: true,
-        });
-        i.thumbnail = this.normalizeThumbUrl_(i.thumbnail);
-        i.discounted_price = `${this.humanPrice_(
-          i.totals.total / i.quantity,
-          currencyCode
-        )} ${currencyCode}`;
-        i.price = `${this.humanPrice_(
-          i.totals.original_total / i.quantity,
-          currencyCode
-        )} ${currencyCode}`;
-        return i;
-      })
+      order.items.map(
+        async (
+          i: LineItem & {
+            totals: { original_total: number; total: number; subtotal };
+            discounted_price: string;
+            price: string;
+          }
+        ) => {
+          i.totals = await this.totalsService_.getLineItemTotals(i, order, {
+            include_tax: true,
+            use_tax_lines: true,
+          });
+          i.thumbnail = this.normalizeThumbUrl_(i.thumbnail);
+          i.discounted_price = `${this.humanPrice_(
+            i.totals.total / i.quantity,
+            currencyCode
+          )} ${currencyCode}`;
+          i.price = `${this.humanPrice_(
+            i.totals.original_total / i.quantity,
+            currencyCode
+          )} ${currencyCode}`;
+          return i;
+        }
+      )
     );
 
     let discounts = [];
