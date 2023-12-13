@@ -65,7 +65,7 @@ export interface WhatsappInterfaceOptions {
 
 export type ErrorCallBack = (error: Error | null, item: MessageInstance) => any;
 
-export class WhatsappInterfaceService extends AbstractNotificationService {
+export class WhatsappService extends AbstractNotificationService {
   logger_: Logger;
   protected manager_: EntityManager;
   protected transactionManager_: EntityManager;
@@ -120,7 +120,7 @@ export class WhatsappInterfaceService extends AbstractNotificationService {
     }
 
     this.transactionManager_ = transactionManager;
-    const cloned = new WhatsappInterfaceService(
+    const cloned = new WhatsappService(
       {
         manager: transactionManager,
         eventBusService: this.eventBusService,
@@ -1313,4 +1313,4 @@ export class WhatsappInterfaceService extends AbstractNotificationService {
   }
 }
 
-export default WhatsappInterfaceService;
+export default WhatsappService;

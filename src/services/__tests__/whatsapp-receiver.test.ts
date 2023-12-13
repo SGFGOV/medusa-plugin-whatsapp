@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, jest } from "@jest/globals";
 import twilio from "twilio";
 import {
-  WhatsappInterfaceService,
+  WhatsappService,
   WhatsappHandlerInterface,
 } from "../whatsapp-interface";
 import { MockManager } from "medusa-test-utils";
@@ -47,7 +47,7 @@ const testOptions = {
 } as any;
 
 describe("WhatsappService", () => {
-  let myWhatsappService: WhatsappInterfaceService;
+  let myWhatsappService: WhatsappService;
   /* describe("Sending Message", () => {
     
     beforeEach(() => {
@@ -87,10 +87,10 @@ describe("WhatsappService", () => {
     });
   });*/
   describe("Recieving  Message", () => {
-    let myWhatsappService: WhatsappInterfaceService;
+    let myWhatsappService: WhatsappService;
     let app;
     beforeAll(() => {
-      myWhatsappService = new WhatsappInterfaceService(
+      myWhatsappService = new WhatsappService(
         {
           logger: console as any,
           eventBusService: mockedEventBusService() as any,

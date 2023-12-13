@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, jest } from "@jest/globals";
-import { WhatsappInterfaceService } from "../whatsapp-interface";
+import { WhatsappService } from "../whatsapp-interface";
 import { MockManager } from "medusa-test-utils";
 import mockedEventBusService from "../__mocks__/event-bus";
 import { MedusaContainer } from "@medusajs/medusa/dist/types/global";
@@ -33,9 +33,9 @@ const testOptions = {
 
 describe("WhatsappService", () => {
   describe("Sending Message", () => {
-    let myWhatsappService: WhatsappInterfaceService;
+    let myWhatsappService: WhatsappService;
     beforeEach(() => {
-      myWhatsappService = new WhatsappInterfaceService(
+      myWhatsappService = new WhatsappService(
         {
           logger: console as any,
           eventBusService: mockedEventBusService as any,
