@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { WhatsappInterfaceOptions } from "services/whatsapp-interface";
+import { WhatsappInterfaceOptions } from "services/whatsapp";
 import twilio from "twilio";
 
 export default (options: WhatsappInterfaceOptions) => {

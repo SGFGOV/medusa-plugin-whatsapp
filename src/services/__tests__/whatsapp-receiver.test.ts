@@ -3,7 +3,7 @@ import twilio from "twilio";
 import {
   WhatsappService,
   WhatsappHandlerInterface,
-} from "../whatsapp-interface";
+} from "../whatsapp";
 import { MockManager } from "medusa-test-utils";
 import mockedEventBusService from "../__mocks__/event-bus";
 import { MedusaContainer } from "@medusajs/medusa/dist/types/global";

@@ -7,3 +7,4 @@ coverage
 *.tgz
 
 tsconfig.tsbuildinfo
+tsconfig.json

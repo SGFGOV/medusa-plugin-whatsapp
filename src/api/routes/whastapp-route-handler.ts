@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import MessagingResponse from "twilio/lib/twiml/MessagingResponse";
-import { WhatsappService } from "../../services/whatsapp-interface";
+import { WhatsappService } from "../../services/whatsapp";
 
 export default async (
   req: Request,

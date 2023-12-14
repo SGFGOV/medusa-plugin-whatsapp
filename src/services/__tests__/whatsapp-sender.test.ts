@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, jest } from "@jest/globals";
-import { WhatsappService } from "../whatsapp-interface";
+import { WhatsappService } from "../whatsapp";
 import { MockManager } from "medusa-test-utils";
 import mockedEventBusService from "../__mocks__/event-bus";
 import { MedusaContainer } from "@medusajs/medusa/dist/types/global";

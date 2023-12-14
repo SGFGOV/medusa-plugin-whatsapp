@@ -4,7 +4,7 @@ import cors from "cors";
 import { getConfigFile } from "medusa-core-utils";
 
 import middlewares from "../middleware";
-import { WhatsappInterfaceOptions } from "../../services/whatsapp-interface";
+import { WhatsappInterfaceOptions } from "../../services/whatsapp";
 import { ConfigModule } from "@medusajs/medusa/dist/types/global";
 import whatsappReceiveHandler from "./whastapp-route-handler";
 import { BodyParser } from "body-parser";
