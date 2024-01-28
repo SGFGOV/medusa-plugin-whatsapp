@@ -175,8 +175,15 @@ export class WhatsappService extends AbstractNotificationService {
     receiver: string,
     message: string,
     otherOptions?: MessageListInstanceCreateOptions,
-    error?: ErrorCallBack
+    error?: ErrorCallBack,
+    conversationSid?: string
   ): Promise<MessageInstance | undefined> {
+    if (!conversationSid) {
+      const conversation =
+        await this.twilioClient.conversations.v1.conversations.create({
+          friendlyName: `${sender}-${receiver}$-${new Date().toISOString()}`,
+        });
+    }
     const basicRequest = {
       from: `whatsapp:${sender}`,
       body: `${message}`,

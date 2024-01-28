@@ -54,11 +54,15 @@
     "supertest": "^6.3.3",
     "ts-jest": "^27.1.3",
     "ts-loader": "^9.2.6",
-    "typescript": "^4.5.5"
+    "typescript": "^4.5.5",
+    "typeorm": "^0.3.16"
+
   },
   "peerDependencies": {
     "@medusajs/medusa": "latest",
-    "medusa-interfaces": "latest"
+    "medusa-interfaces": "latest",
+    "typeorm": "^0.3.16"
+
   },
   "dependencies": {
     "body-parser": "^1.19.1",
@@ -66,9 +70,8 @@
     "express": "^4.17.2",
     "medusa-core-utils": "^1.1.31",
     "medusa-test-utils": "^1.1.37",
-    "twilio": "^3.84.0",
-    "typeorm": "0.3.14"
-  },
+    "twilio": "^3.84.0"
+      },
   "jest": {
     "globals": {
       "ts-jest": {
