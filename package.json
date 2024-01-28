@@ -1,6 +1,6 @@
 {
   "name": "medusa-plugin-whatsapp",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "description": "A plugin to integrate with medusa with whatsapp",
   "main": "index.js",
   "types": "index.d.ts",
@@ -56,13 +56,11 @@
     "ts-loader": "^9.2.6",
     "typescript": "^4.5.5",
     "typeorm": "^0.3.16"
-
   },
   "peerDependencies": {
     "@medusajs/medusa": "latest",
     "medusa-interfaces": "latest",
     "typeorm": "^0.3.16"
-
   },
   "dependencies": {
     "body-parser": "^1.19.1",
@@ -71,7 +69,7 @@
     "medusa-core-utils": "^1.1.31",
     "medusa-test-utils": "^1.1.37",
     "twilio": "^3.84.0"
-      },
+  },
   "jest": {
     "globals": {
       "ts-jest": {
