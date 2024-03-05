@@ -7,9 +7,7 @@ export default async (
   res: Response
 ): Promise<Response<void | Response<{ message: string }>>> => {
   try {
-    const service = req.scope.resolve(
-      "whatsappInterfaceService"
-    ) as WhatsappService;
+    const service = req.scope.resolve("whatsappService") as WhatsappService;
     const responeMessage: MessagingResponse =
       await service.processReceivedMessage(req.scope, req.body);
     res.send(responeMessage.toString());
