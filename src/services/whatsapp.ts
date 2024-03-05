@@ -184,18 +184,37 @@ export class WhatsappService extends AbstractNotificationService {
           friendlyName: `${sender}-${receiver}$-${new Date().toISOString()}`,
         });
     }
+    let quickResponse: Record<string, any>;
+    try {
+      quickResponse = JSON.parse(message);
+      if (quickResponse.contentSid) {
+        quickResponse = {
+          ...quickResponse,
+          body: undefined,
+        };
+      }
+      this.logger_.debug(`received ${JSON.stringify(quickResponse)}`)
+    } catch (e) {
+      this.logger_.warn("Non JSON message fromat receied");
+    }
     const basicRequest = {
       from: `whatsapp:${sender}`,
       body: `${message}`,
       to: `whatsapp:${receiver}`,
     };
+    if(quickResponse)
+    {
+      delete basicRequest.body
+    }
     const request = otherOptions
       ? {
           ...otherOptions,
           ...basicRequest,
+          ...quickResponse,
         }
       : basicRequest;
     try {
+      this.logger_.debug(`twilio request ${JSON.stringify(request)}`)
       const whatsappMessage = await this.twilioClient.messages.create(
         request,
         error

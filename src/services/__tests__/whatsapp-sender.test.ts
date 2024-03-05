@@ -13,6 +13,9 @@ const TWILIO_ACCOUNT_SID =
   config.parsed?.TWILIO_AUTH_SID ||
   "ACDummy"; /* user production keys when testing with sandbox */
 const TWILIO_ACCOUNT_TOKEN = config.parsed?.TWILIO_AUTH_TOKEN ?? "dummy";
+const TWILIO_SAMPLE_WHATSAPP_CONTENT_SID =
+  config.parsed?.TWILIO_SAMPLE_WHATSAPP_CONTENT_SID ?? "dummy";
+
 const TEST_TWILIO_SANDBOX_NUMBER =
   config.parsed?.TEST_SEND_NUMBER ??
   "00000"; /* the number you created the sandbox with */
@@ -78,6 +81,36 @@ describe("WhatsappService", () => {
           if (error) {
             console.log(error);
           } else {
+            return done;
+          }
+        }
+      );
+      expect(result).toBeDefined();
+    });
+    it("initiate-sandbox-qr", async () => {
+      console.log("Testing qr");
+      const sender = TEST_TWILIO_SANDBOX_NUMBER;
+      const receiver = TEST_RECEIVER_NUMBER; /* sandbox member number */
+      const message = JSON.stringify({
+        contentSid: TWILIO_SAMPLE_WHATSAPP_CONTENT_SID,
+        contentVariables: JSON.stringify({
+          1: "test",
+          2: "01-01-2024",
+          3: "1234/1223",
+        }),
+      });
+
+      const result = await myWhatsappService.sendTextMessage(
+        sender,
+        receiver,
+        message,
+        undefined,
+        (error, done) => {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log("Testing qr --done");
+
             return done;
           }
         }
