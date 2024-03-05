@@ -5,7 +5,7 @@ import { getConfigFile } from "medusa-core-utils";
 
 import middlewares from "../middleware";
 import { WhatsappInterfaceOptions } from "../../services/whatsapp";
-import { ConfigModule } from "@medusajs/medusa/dist/types/global";
+import { ConfigModule, Logger } from "@medusajs/medusa/dist/types/global";
 import whatsappReceiveHandler from "./whastapp-route-handler";
 import { BodyParser } from "body-parser";
 const whatsAppMessageRouter = Router();
@@ -26,19 +26,29 @@ export default (
     whatsAppMessageRouter.options(whatsappPath, cors(corsOptions));
     whatsAppMessageRouter.post(whatsappPath, cors(corsOptions));
   }
-  whatsAppMessageRouter.post(whatsappPath, (req, res, next) => {
-    console.log("received whatsapp message");
-    next();
-  });
-  whatsAppMessageRouter.post(whatsappPath, bodyParser.text());
-  whatsAppMessageRouter.post(whatsappPath, bodyParser.urlencoded());
-  whatsAppMessageRouter.post(whatsappPath, bodyParser.json());
-  whatsAppMessageRouter.post(whatsappPath, bodyParser.raw());
   whatsAppMessageRouter.post(
     whatsappPath,
-    middlewares.verifyTwilioHeader(options)
+    (req, res, next) => {
+      const logger = req.scope.resolve("logger") as Logger;
+      logger.debug("received whatsapp message");
+      next();
+    },
+    bodyParser.text(),
+    bodyParser.urlencoded(),
+    bodyParser.json(),
+    bodyParser.json(),
+    middlewares.verifyTwilioHeader(options),
+    whatsappReceiveHandler
   );
-  // route.post(whatsappPath, bodyParser.json());
+  // whatsAppMessageRouter.post(whatsappPath);
+  // whatsAppMessageRouter.post(whatsappPath);
+  // whatsAppMessageRouter.post(whatsappPath);
+  // whatsAppMessageRouter.post(whatsappPath, bodyParser.json());
+  // whatsAppMessageRouter.post(
+  //   whatsappPath,
+   
+  // );
+  // // route.post(whatsappPath, bodyParser.json());
 
   whatsAppMessageRouter.post(whatsappPath, whatsappReceiveHandler);
   return whatsAppMessageRouter;
