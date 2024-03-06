@@ -7,6 +7,7 @@ import {
   WhatsappSession,
   WhatsappMessage,
   WhatsappRequest,
+  WhatsappLocationMessage,
 } from "types";
 
 function createWhatsappSession(message: WhatsappMediaMessage): WhatsappSession {
@@ -29,7 +30,7 @@ export default async (
   try {
     const service = req.scope.resolve("whatsappService") as WhatsappService;
     let activeSession: WhatsappSession;
-    const whatsappMessage: WhatsappMediaMessage =
+    const whatsappMessage: WhatsappMediaMessage | WhatsappLocationMessage =
       req.body as WhatsappMediaMessage;
     if (!req.session.whatsappSessions?.length) {
       activeSession = createWhatsappSession(whatsappMessage);
@@ -60,7 +61,8 @@ export default async (
       sender: "BOT",
       message: reponse,
     });
-    res.send();
+    res.set("Content-Type", "text/xml");
+    res.send(reponse);
   } catch (err) {
     return res.status(400).json({ message: err.message });
   }
