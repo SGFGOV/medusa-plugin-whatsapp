@@ -44,7 +44,7 @@ export default async (
       } else {
         activeSession.messages.push({
           sender: "USER",
-          message: "whatsappMessage",
+          message: whatsappMessage,
         });
       }
     }
