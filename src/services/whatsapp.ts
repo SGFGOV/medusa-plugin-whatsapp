@@ -28,6 +28,7 @@ import MessagingResponse from "twilio/lib/twiml/MessagingResponse";
 import { MessageListInstanceCreateOptions } from "twilio/lib/rest/api/v2010/account/message";
 import { NotificationProvider } from "@medusajs/medusa/dist/models/notification-provider";
 import { humanizeAmount, zeroDecimalCurrencies } from "medusa-core-utils";
+import { WhatsappSession } from "../types";
 export interface WhatsappInterfaceServiceParams {
   manager: EntityManager;
   eventBusService: EventBusService;
@@ -50,7 +51,8 @@ export interface WhatsappInterfaceServiceParams {
 export interface WhatsappHandlerInterface<T> {
   whatsappHandler: (
     container: MedusaContainer,
-    body: T
+    body: T,
+    activeSession: WhatsappSession
   ) => Promise<MessagingResponse>;
 }
 
@@ -146,12 +148,17 @@ export class WhatsappService extends AbstractNotificationService {
 
   async processReceivedMessage<T>(
     container: MedusaContainer,
-    body: T
+    body: T,
+    activeSession: WhatsappSession
   ): Promise<MessagingResponse> {
     const whatsappHandler = container.resolve(
       this.options.whatsappHandlerInterface
     ) as WhatsappHandlerInterface<T>;
-    const result = await whatsappHandler.whatsappHandler(container, body);
+    const result = await whatsappHandler.whatsappHandler(
+      container,
+      body,
+      activeSession
+    );
     await this.atomicPhase_(async (manager) => {
       return await this.eventBusService
         .withTransaction(manager)
@@ -193,7 +200,7 @@ export class WhatsappService extends AbstractNotificationService {
           body: undefined,
         };
       }
-      this.logger_.debug(`received ${JSON.stringify(quickResponse)}`)
+      this.logger_.debug(`received ${JSON.stringify(quickResponse)}`);
     } catch (e) {
       this.logger_.warn("Non JSON message fromat receied");
     }
@@ -202,9 +209,8 @@ export class WhatsappService extends AbstractNotificationService {
       body: `${message}`,
       to: `whatsapp:${receiver}`,
     };
-    if(quickResponse)
-    {
-      delete basicRequest.body
+    if (quickResponse) {
+      delete basicRequest.body;
     }
     const request = otherOptions
       ? {
@@ -214,7 +220,7 @@ export class WhatsappService extends AbstractNotificationService {
         }
       : basicRequest;
     try {
-      this.logger_.debug(`twilio request ${JSON.stringify(request)}`)
+      this.logger_.debug(`twilio request ${JSON.stringify(request)}`);
       const whatsappMessage = await this.twilioClient.messages.create(
         request,
         error

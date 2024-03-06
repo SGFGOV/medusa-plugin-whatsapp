@@ -17,6 +17,7 @@ migrations/
 loaders/
 index.*
 utils/
+types/
 src/coverage
 
 !src/services

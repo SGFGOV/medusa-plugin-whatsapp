@@ -1,6 +1,6 @@
 {
   "name": "medusa-plugin-whatsapp",
-  "version": "1.1.15",
+  "version": "1.1.16",
   "description": "A plugin to integrate with medusa with whatsapp",
   "main": "index.js",
   "types": "index.d.ts",
@@ -24,7 +24,7 @@
   "author": "Govind Diwakar <govind.diwakar@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "clean": "./node_modules/.bin/rimraf services/ models/ migrations/ api/ utils/ subscribers/ index.js index.map.js",
+    "clean": "./node_modules/.bin/rimraf services/ models/ migrations/ api/ utils/ subscribers/ types/ index.js index.map.js",
     "build": "npm run clean && tsc -p tsconfig.json",
     "watch": "tsc --watch",
     "test": "jest --coverage"
