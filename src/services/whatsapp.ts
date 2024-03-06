@@ -18,15 +18,13 @@ import {
   StoreService,
   SwapService,
   TotalsService,
-  TransactionBaseService,
 } from "@medusajs/medusa";
 import { Logger, MedusaContainer } from "@medusajs/medusa/dist/types/global";
 import twilio from "twilio";
 import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
-import { EntityManager, IsNull, Not } from "typeorm";
+import { EntityManager } from "typeorm";
 import MessagingResponse from "twilio/lib/twiml/MessagingResponse";
 import { MessageListInstanceCreateOptions } from "twilio/lib/rest/api/v2010/account/message";
-import { NotificationProvider } from "@medusajs/medusa/dist/models/notification-provider";
 import { humanizeAmount, zeroDecimalCurrencies } from "medusa-core-utils";
 import { WhatsappSession } from "../types";
 export interface WhatsappInterfaceServiceParams {
