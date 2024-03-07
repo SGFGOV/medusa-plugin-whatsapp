@@ -1599,3 +1599,5 @@ export class WhatsappService extends AbstractNotificationService {
     }
   }
 }
+
+export default WhatsappService;
