@@ -1505,10 +1505,11 @@ export class WhatsappService extends AbstractNotificationService {
 
   async joinAgent(
     convId: string,
+    agentRealNumber: string,
     agentName = "AGENT"
   ): Promise<ParticipantInstance> {
     const messageBinding = {
-      address: `whatsapp:${process.env.TWILIO_AGENT_REAL_NUMBER}`,
+      address: `whatsapp:${agentRealNumber}`,
       proxyAddress: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
     };
     try {
@@ -1552,7 +1553,8 @@ export class WhatsappService extends AbstractNotificationService {
 
   async sendConversationMessageFromAgent(
     convId: string,
-    message: string
+    message: string,
+    agentNumber: string
   ): Promise<ConversationMessageInstance> {
     // Download the helper library from https://www.twilio.com/docs/node/install
     // Find your Account SID and Auth Token at twilio.com/console
@@ -1561,7 +1563,7 @@ export class WhatsappService extends AbstractNotificationService {
       const messageInstance = await this.twilioClient.conversations.v1
         .conversations(convId)
         .messages.create({
-          author: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
+          author: `whatsapp:${agentNumber}`,
           body: message,
         });
       return messageInstance;
@@ -1576,10 +1578,12 @@ export class WhatsappService extends AbstractNotificationService {
     convId,
     contentSid,
     contentVariables,
+    agentNumber,
   }: {
     convId: string;
     contentSid: string;
     contentVariables: Record<string, string>;
+    agentNumber: string;
   }): Promise<ConversationMessageInstance> {
     // Download the helper library from https://www.twilio.com/docs/node/install
     // Find your Account SID and Auth Token at twilio.com/console
@@ -1588,7 +1592,7 @@ export class WhatsappService extends AbstractNotificationService {
       const messageInstance = await this.twilioClient.conversations.v1
         .conversations(convId)
         .messages.create({
-          author: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
+          author: `whatsapp:${agentNumber}`,
           contentSid,
           contentVariables: JSON.stringify(contentVariables),
         });
@@ -1601,17 +1605,17 @@ export class WhatsappService extends AbstractNotificationService {
   }
   async startWhatsappAgentConversation(
     sender: string,
-    reciever: string
+    receiver: string
   ): Promise<ConversationInstance> {
     try {
       const conversation = await this.startConversation({
-        sender: `${process.env.TWILIO_SMS_NUMBER}`,
-        receiver: `${reciever}`,
+        sender: `${sender}`,
+        receiver: `${receiver}`,
       });
       await this.joinAgent(conversation.sid, sender);
       await this.joinUser({
         convId: conversation.sid,
-        phone: reciever,
+        phone: receiver,
       });
       return conversation;
     } catch (e) {
