@@ -13,22 +13,31 @@ export default async (
 ): Promise<Response<void | Response<{ message: string }>>> => {
   try {
     const service = req.scope.resolve("whatsappService") as WhatsappService;
-    const logger = req.scope.resolve("logger") as Logger;
 
     const whatsappMessage: WhatsappMediaMessage | WhatsappLocationMessage =
       req.body as WhatsappMediaMessage;
+    let responseSent = false;
 
-    setTimeout(() => {
-      res.set("Content-Type", "text/xml");
+    const timeOut = setTimeout(() => {
+      if (!responseSent) {
+        responseSent = true;
+        res.set("Content-Type", "text/xml");
+      }
       res.sendStatus(200);
-      logger.debug("sending default response to converation");
     }, 4500);
 
     await service.processReceivedConversationPosthook(
       req.scope,
       whatsappMessage
     );
+    clearTimeout(timeOut);
+
+    if (!responseSent) {
+      responseSent = true;
+      res.set("Content-Type", "text/xml");
+      res.sendStatus(200);
+    }
   } catch (err) {
-    return res.status(400).json({ message: err.message });
+    return res.status(400);
   }
 };

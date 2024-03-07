@@ -42,3 +42,19 @@ export interface WhatsappLocationMessage extends WhatsappBasicMessage {
   Longitude: string;
   Latitude: string;
 }
+
+export interface WhatsappConversation {
+  RetryCount: string;
+  EventType: string;
+  Attributes: string;
+  Author: string;
+  ChatServiceSid: string;
+  ParticipantSid: string;
+  Body?: string;
+  Media?: string;
+  Longitude?: string;
+  Latitude?: string;
+  AccountSid: string;
+  Source: string;
+  ConversationSid: string;
+}

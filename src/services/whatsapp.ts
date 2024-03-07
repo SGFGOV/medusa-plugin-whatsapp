@@ -29,7 +29,7 @@ import {
   MessageListInstanceCreateOptions,
 } from "twilio/lib/rest/api/v2010/account/message";
 import { humanizeAmount, zeroDecimalCurrencies } from "medusa-core-utils";
-import { WhatsappSession } from "../types";
+import { WhatsappConversation, WhatsappSession } from "../types";
 import { ConversationInstance } from "twilio/lib/rest/conversations/v1/conversation";
 import { ParticipantInstance } from "twilio/lib/rest/conversations/v1/conversation/participant";
 import { MessageInstance as ConversationMessageInstance } from "twilio/lib/rest/conversations/v1/conversation/message";
@@ -59,7 +59,7 @@ export interface WhatsappHandlerInterface<T> {
     body: T,
     activeSession: WhatsappSession
   ) => Promise<MessagingResponse>;
-  whatsappConversationPrehookHandler?: (
+  whatsappConversationPrehookHandler: (
     container: MedusaContainer,
     body: T,
     activeSession?: WhatsappSession
