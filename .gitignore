@@ -16,11 +16,15 @@ subscribers/
 migrations/
 loaders/
 index.*
+!index.ts
+
+
 utils/
 types/
+!src/*
 src/coverage
+*.log
 
-!src/services
 
 ./tsconfig.tsbuildinfo
 ./package-lock.json
