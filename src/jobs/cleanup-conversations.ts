@@ -8,6 +8,7 @@ import { UserConversationInstance } from "twilio/lib/rest/conversations/v1/user/
 
 export default async function handler({
   container,
+  data,
 }: ScheduledJobArgs): Promise<void> {
   const whatsappService = container.resolve(
     "whatsappService"
@@ -52,7 +53,7 @@ export default async function handler({
           const userConversationInstances = await conversations.list();
           try {
             if (userConversationInstances?.length == 0) {
-              if (user.friendlyName != "AGENT") {
+              if (user.identity != (data as { agent: string }).agent) {
                 await user.remove();
               }
             }
@@ -64,7 +65,7 @@ export default async function handler({
             ` unable to fetch conversations of user ${user.identity} ${e.message}`
           );
           try {
-            if (user.friendlyName != "AGENT") {
+            if (user.identity != (data as { agent: string }).agent) {
               await user.remove();
             }
           } catch (e) {
