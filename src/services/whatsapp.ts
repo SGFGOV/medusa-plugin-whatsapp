@@ -1478,6 +1478,8 @@ export class WhatsappService extends AbstractNotificationService {
     try {
       const conversation =
         await this.twilioClient.conversations.v1.conversations.create({
+          timers: { inactive: "PT10M", closed: "PT36000S" },
+          state: "active",
           friendlyName: `${sender}-${receiver}$-${new Date().getDate()}`,
         });
       return conversation;
@@ -1500,7 +1502,10 @@ export class WhatsappService extends AbstractNotificationService {
     }
   }
 
-  async joinAgent(convId: string): Promise<ParticipantInstance> {
+  async joinAgent(
+    convId: string,
+    agentName = "AGENT"
+  ): Promise<ParticipantInstance> {
     const messageBinding = {
       address: `whatsapp:${process.env.TWILIO_AGENT_REAL_NUMBER}`,
       proxyAddress: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
@@ -1509,6 +1514,7 @@ export class WhatsappService extends AbstractNotificationService {
       const agent = await this.twilioClient.conversations.v1
         .conversations(convId)
         .participants.create({
+          identity: agentName,
           messagingBinding: messageBinding,
         });
       return agent;
