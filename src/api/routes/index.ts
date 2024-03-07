@@ -7,6 +7,9 @@ import middlewares from "../middleware";
 import { WhatsappInterfaceOptions } from "../../services/whatsapp";
 import { ConfigModule, Logger } from "@medusajs/medusa/dist/types/global";
 import whatsappReceiveHandler from "./whastapp-route-handler";
+import whatsappConversationPreHookHandler from "./whastapp-conversation-prehook-handler";
+import whatsappConversationPostHookHandler from "./whastapp-conversation-posthook-handler";
+
 import session from "express-session";
 import redis, { Redis } from "ioredis";
 
@@ -18,6 +21,8 @@ export default (
   configModule: ConfigModule
 ): Router => {
   const whatsappPath = "/received";
+  const whatappConversationPreHookPath = "/prepare";
+  const whatappConversationPostActionPath = "/do";
   app.use("/whatsapp", whatsAppMessageRouter);
 
   const corsOptions = {
@@ -68,16 +73,33 @@ export default (
     middlewares.verifyTwilioHeader(options),
     whatsappReceiveHandler
   );
-  // whatsAppMessageRouter.post(whatsappPath);
-  // whatsAppMessageRouter.post(whatsappPath);
-  // whatsAppMessageRouter.post(whatsappPath);
-  // whatsAppMessageRouter.post(whatsappPath, bodyParser.json());
-  // whatsAppMessageRouter.post(
-  //   whatsappPath,
-
-  // );
-  // // route.post(whatsappPath, bodyParser.json());
-
-  // whatsAppMessageRouter.post(whatsappPath, whatsappReceiveHandler);
+  whatsAppMessageRouter.post(
+    whatappConversationPreHookPath,
+    (req, res, next) => {
+      const logger = req.scope.resolve("logger") as Logger;
+      logger.debug("received whatsapp conversation prehook message");
+      next();
+    },
+    bodyParser.text(),
+    bodyParser.urlencoded(),
+    bodyParser.json(),
+    bodyParser.json(),
+    middlewares.verifyTwilioHeader(options),
+    whatsappConversationPreHookHandler
+  );
+  whatsAppMessageRouter.post(
+    whatappConversationPostActionPath,
+    (req, res, next) => {
+      const logger = req.scope.resolve("logger") as Logger;
+      logger.debug("received whatsapp conversation posthook message");
+      next();
+    },
+    bodyParser.text(),
+    bodyParser.urlencoded(),
+    bodyParser.json(),
+    bodyParser.json(),
+    middlewares.verifyTwilioHeader(options),
+    whatsappConversationPostHookHandler
+  );
   return whatsAppMessageRouter;
 };

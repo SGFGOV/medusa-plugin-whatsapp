@@ -10,6 +10,7 @@ import {
   GiftCardService,
   LineItem,
   LineItemService,
+  Notification,
   Order,
   OrderService,
   ProductVariantService,
@@ -21,12 +22,18 @@ import {
 } from "@medusajs/medusa";
 import { Logger, MedusaContainer } from "@medusajs/medusa/dist/types/global";
 import twilio from "twilio";
-import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
+
 import { EntityManager } from "typeorm";
-import MessagingResponse from "twilio/lib/twiml/MessagingResponse";
-import { MessageListInstanceCreateOptions } from "twilio/lib/rest/api/v2010/account/message";
+import MessagingResponse, { Message } from "twilio/lib/twiml/MessagingResponse";
+import {
+  MessageInstance,
+  MessageListInstanceCreateOptions,
+} from "twilio/lib/rest/api/v2010/account/message";
 import { humanizeAmount, zeroDecimalCurrencies } from "medusa-core-utils";
 import { WhatsappSession } from "../types";
+import { ConversationInstance } from "twilio/lib/rest/conversations/v1/conversation";
+import { ParticipantInstance } from "twilio/lib/rest/conversations/v1/conversation/participant";
+import { MessageInstance as ConversationMessageInstance } from "twilio/lib/rest/conversations/v1/conversation/message";
 export interface WhatsappInterfaceServiceParams {
   manager: EntityManager;
   eventBusService: EventBusService;
@@ -52,6 +59,16 @@ export interface WhatsappHandlerInterface<T> {
     body: T,
     activeSession: WhatsappSession
   ) => Promise<MessagingResponse>;
+  whatsappConversationPrehookHandler?: (
+    container: MedusaContainer,
+    body: T,
+    activeSession?: WhatsappSession
+  ) => Promise<ConversationMessageInstance>;
+  whatsappConversationPosthookHandler?: (
+    container: MedusaContainer,
+    body: T,
+    activeSession?: WhatsappSession
+  ) => Promise<ConversationMessageInstance>;
 }
 
 export interface WhatsappInterfaceOptions {
@@ -165,6 +182,58 @@ export class WhatsappService extends AbstractNotificationService {
 
     return result;
   }
+  async processReceivedConversationPrehook<T>(
+    container: MedusaContainer,
+    body: T
+  ): Promise<ConversationMessageInstance> {
+    const whatsappHandler = container.resolve(
+      this.options.whatsappHandlerInterface
+    ) as WhatsappHandlerInterface<T>;
+    if (whatsappHandler.whatsappConversationPrehookHandler) {
+      const result = await whatsappHandler.whatsappConversationPrehookHandler(
+        container,
+        body
+      );
+      await this.atomicPhase_(async (manager) => {
+        return await this.eventBusService
+          .withTransaction(manager)
+          .emit(
+            "medusa.whatsapp.converation.prehook.replied",
+            result.toString()
+          );
+      });
+
+      return result;
+    } else {
+      this.logger_.error("conversation prehook not configured");
+    }
+  }
+  async processReceivedConversationPosthook<T>(
+    container: MedusaContainer,
+    body: T
+  ): Promise<ConversationMessageInstance> {
+    const whatsappHandler = container.resolve(
+      this.options.whatsappHandlerInterface
+    ) as WhatsappHandlerInterface<T>;
+    if (whatsappHandler.whatsappConversationPosthookHandler) {
+      const result = await whatsappHandler.whatsappConversationPosthookHandler(
+        container,
+        body
+      );
+      await this.atomicPhase_(async (manager) => {
+        return await this.eventBusService
+          .withTransaction(manager)
+          .emit(
+            "medusa.whatsapp.conversation.posthook.replied",
+            result.toString()
+          );
+      });
+
+      return result;
+    } else {
+      this.logger_.error("conversation posthook not configured");
+    }
+  }
   /**
    *
    * @param sender - senders phone number in iso format "eg: +1xxxxxxxx"
@@ -180,15 +249,8 @@ export class WhatsappService extends AbstractNotificationService {
     receiver: string,
     message: string,
     otherOptions?: MessageListInstanceCreateOptions,
-    error?: ErrorCallBack,
-    conversationSid?: string
-  ): Promise<MessageInstance | undefined> {
-    if (!conversationSid) {
-      const conversation =
-        await this.twilioClient.conversations.v1.conversations.create({
-          friendlyName: `${sender}-${receiver}$-${new Date().toISOString()}`,
-        });
-    }
+    error?: ErrorCallBack
+  ): Promise<MessageInstance> {
     let quickResponse: Record<string, any>;
     try {
       quickResponse = JSON.parse(message);
@@ -1341,6 +1403,193 @@ export class WhatsappService extends AbstractNotificationService {
     }
     return null;
   }
-}
+  createTemplateParameters(...args: string[]): Record<string, string> {
+    const parameters = {};
+    for (let index = 0; index < args.length; index++) {
+      parameters[index] = args[index];
+    }
+    return parameters;
+  }
 
-export default WhatsappService;
+  createTemplatedMessage({
+    messageId,
+    to: phone,
+    parameters,
+    contentSid,
+  }: {
+    messageId: string;
+    to: string;
+    parameters: Record<string, string>;
+    contentSid: string;
+  }): {
+    id: string;
+    sender: string;
+    receiver: string;
+    contentSid: string;
+    contentVaribles: string;
+  } {
+    return {
+      id: `msg_whatsapp_${messageId}`,
+      sender: process.env.TWILIO_SMS_NUMBER,
+      receiver: phone,
+      contentSid: contentSid,
+      contentVaribles: JSON.stringify(parameters),
+    };
+  }
+
+  async sendContentTemplate({
+    messageId,
+    to,
+    parameters,
+    contentSid,
+  }: {
+    messageId: string;
+    to: string;
+    parameters: Record<string, string>;
+    contentSid: string;
+  }): Promise<MessageInstance> {
+    const stringMessage = JSON.stringify(
+      this.createTemplatedMessage({
+        messageId,
+        to,
+        parameters,
+        contentSid,
+      })
+    );
+    try {
+      const phoneResult = await this.sendTextMessage(
+        process.env.TWILIO_WHATSAPP_NUMBER,
+        to,
+        stringMessage
+      );
+      return phoneResult;
+    } catch (e) {
+      this.logger_.error(`unable to send message ${e.message}`);
+    }
+  }
+
+  async startConversation({
+    sender,
+    receiver,
+  }: {
+    sender: string;
+    receiver: string;
+  }): Promise<ConversationInstance> {
+    try {
+      const conversation =
+        await this.twilioClient.conversations.v1.conversations.create({
+          friendlyName: `${sender}-${receiver}$-${new Date().getDate()}`,
+        });
+      return conversation;
+    } catch (e) {
+      this.logger_.error(
+        `unable to create conversation between ${sender} & ${receiver} ${e.message}`
+      );
+    }
+  }
+
+  async getExistingConversation(convId: string): Promise<ConversationInstance> {
+    try {
+      return await this.twilioClient.conversations.v1
+        .conversations(convId)
+        .fetch();
+    } catch (e) {
+      this.logger_.error(
+        `unable to fetech conversation with id ${convId} ${e.message}`
+      );
+    }
+  }
+
+  async joinAgent(convId: string): Promise<ParticipantInstance> {
+    const messageBinding = {
+      address: `whatsapp:${process.env.TWILIO_AGENT_REAL_NUMBER}`,
+      proxyAddress: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
+    };
+    try {
+      const agent = await this.twilioClient.conversations.v1
+        .conversations(convId)
+        .participants.create({
+          messagingBinding: messageBinding,
+        });
+      return agent;
+    } catch (e) {
+      this.logger_.error(
+        `unable to add bot to conversation with id ${convId} ${e.message}`
+      );
+    }
+  }
+  async joinUser({
+    convId,
+    phone,
+  }: {
+    convId: string;
+    phone: string;
+  }): Promise<ParticipantInstance> {
+    const messageBinding = {
+      address: `whatsapp:${phone}`,
+      proxyAddress: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
+    };
+    try {
+      const user = await this.twilioClient.conversations.v1
+        .conversations(convId)
+        .participants.create({
+          messagingBinding: messageBinding,
+        });
+      return user;
+    } catch (e) {
+      this.logger_.error(
+        `unable to add user to conversation with id ${convId} ${e.message}`
+      );
+    }
+  }
+
+  async sendConversationMessageFromAgent(
+    convId: string,
+    message: string
+  ): Promise<ConversationMessageInstance> {
+    // Download the helper library from https://www.twilio.com/docs/node/install
+    // Find your Account SID and Auth Token at twilio.com/console
+    // and set the environment variables. See http://twil.io/secure
+    try {
+      const messageInstance = await this.twilioClient.conversations.v1
+        .conversations(convId)
+        .messages.create({
+          author: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
+          body: message,
+        });
+      return messageInstance;
+    } catch (e) {
+      this.logger_.error(
+        `unable to send message to conversation with id ${convId} ${e.message}`
+      );
+    }
+  }
+
+  async sendConversationContentTemplateFromAgent({
+    convId,
+    contentSid,
+    contentVariables,
+  }: {
+    convId: string;
+    contentSid: string;
+    contentVariables: Record<string, string>;
+  }): Promise<ConversationMessageInstance> {
+    // Download the helper library from https://www.twilio.com/docs/node/install
+    // Find your Account SID and Auth Token at twilio.com/console
+    // and set the environment variables. See http://twil.io/secure
+    try {
+      const messageInstance = await this.twilioClient.conversations.v1
+        .conversations(convId)
+        .messages.create({
+          author: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
+          contentSid,
+          contentVariables: JSON.stringify(contentVariables),
+        });
+      return messageInstance;
+    } catch (e) {
+      this.logger_.error(
+        `unable to send message to conversation with id ${convId} ${e.message}`
+      );
+    }
+  }
+}
