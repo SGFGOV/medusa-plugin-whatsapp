@@ -70,7 +70,7 @@ export default (
     bodyParser.urlencoded(),
     bodyParser.json(),
     bodyParser.json(),
-    middlewares.verifyTwilioHeader(options),
+    middlewares.verifyTwilioHeader(options, `/whatsapp${whatsappPath}`),
     whatsappReceiveHandler
   );
   whatsAppMessageRouter.post(
@@ -84,7 +84,10 @@ export default (
     bodyParser.urlencoded(),
     bodyParser.json(),
     bodyParser.json(),
-    middlewares.verifyTwilioHeader(options),
+    middlewares.verifyTwilioHeader(
+      options,
+      `/whatsapp${whatappConversationPreHookPath}`
+    ),
     whatsappConversationPreHookHandler
   );
   whatsAppMessageRouter.post(
@@ -98,7 +101,10 @@ export default (
     bodyParser.urlencoded(),
     bodyParser.json(),
     bodyParser.json(),
-    middlewares.verifyTwilioHeader(options),
+    middlewares.verifyTwilioHeader(
+      options,
+      `/whatsapp${whatappConversationPostActionPath}`
+    ),
     whatsappConversationPostHookHandler
   );
   return whatsAppMessageRouter;

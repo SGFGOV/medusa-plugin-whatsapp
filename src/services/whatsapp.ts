@@ -10,7 +10,6 @@ import {
   GiftCardService,
   LineItem,
   LineItemService,
-  Notification,
   Order,
   OrderService,
   ProductVariantService,
@@ -24,7 +23,7 @@ import { Logger, MedusaContainer } from "@medusajs/medusa/dist/types/global";
 import twilio from "twilio";
 
 import { EntityManager } from "typeorm";
-import MessagingResponse, { Message } from "twilio/lib/twiml/MessagingResponse";
+import MessagingResponse from "twilio/lib/twiml/MessagingResponse";
 import {
   MessageInstance,
   MessageListInstanceCreateOptions,
@@ -1585,9 +1584,6 @@ export class WhatsappService extends AbstractNotificationService {
     contentVariables: Record<string, string>;
     agentNumber: string;
   }): Promise<ConversationMessageInstance> {
-    // Download the helper library from https://www.twilio.com/docs/node/install
-    // Find your Account SID and Auth Token at twilio.com/console
-    // and set the environment variables. See http://twil.io/secure
     try {
       const messageInstance = await this.twilioClient.conversations.v1
         .conversations(convId)

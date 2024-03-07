@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { WhatsappInterfaceOptions } from "services/whatsapp";
 import twilio from "twilio";
 
-export default (options: WhatsappInterfaceOptions) => {
+export default (options: WhatsappInterfaceOptions, path: string) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const twilioSignature = req.headers["x-twilio-signature"];
     const params = req.body;
@@ -10,7 +10,7 @@ export default (options: WhatsappInterfaceOptions) => {
     if (!params || params?.length == 0) {
       requestIsValid = false;
     } else {
-      const url = `${options.medusaServerProtocol}://${options.medusaServerHost}:${options.medusaServerPort}/whatsapp/received`;
+      const url = `${options.medusaServerProtocol}://${options.medusaServerHost}:${options.medusaServerPort}${path}`;
 
       requestIsValid = twilio.validateRequest(
         options.auth_token,

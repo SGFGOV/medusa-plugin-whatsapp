@@ -5,6 +5,7 @@ import {
   WhatsappRequest,
   WhatsappLocationMessage,
 } from "types";
+import { Logger } from "@medusajs/medusa";
 
 export default async (
   req: WhatsappRequest,
@@ -12,15 +13,21 @@ export default async (
 ): Promise<Response<void | Response<{ message: string }>>> => {
   try {
     const service = req.scope.resolve("whatsappService") as WhatsappService;
+    const logger = req.scope.resolve("logger") as Logger;
+
     const whatsappMessage: WhatsappMediaMessage | WhatsappLocationMessage =
       req.body as WhatsappMediaMessage;
+
+    setTimeout(() => {
+      res.set("Content-Type", "text/xml");
+      res.sendStatus(200);
+      logger.debug("sending default response to converation");
+    }, 4500);
 
     await service.processReceivedConversationPosthook(
       req.scope,
       whatsappMessage
     );
-    res.set("Content-Type", "text/xml");
-    res.sendStatus(200);
   } catch (err) {
     return res.status(400).json({ message: err.message });
   }
