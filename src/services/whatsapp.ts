@@ -34,6 +34,7 @@ import { ConversationInstance } from "twilio/lib/rest/conversations/v1/conversat
 import { ParticipantInstance } from "twilio/lib/rest/conversations/v1/conversation/participant";
 import { MessageInstance as ConversationMessageInstance } from "twilio/lib/rest/conversations/v1/conversation/message";
 import { error } from "console";
+import { ContentInstance } from "twilio/lib/rest/content/v1/content";
 export interface WhatsappInterfaceServiceParams {
   manager: EntityManager;
   eventBusService: EventBusService;
@@ -1616,6 +1617,17 @@ export class WhatsappService extends AbstractNotificationService {
       return conversation;
     } catch (e) {
       this.logger_, error("Unable to start agent conversation " + e.message);
+    }
+  }
+
+  async getContentTemplate(contentId: string): Promise<ContentInstance> {
+    try {
+      const template = await this.twilioClient.content.v1
+        .contents(contentId)
+        .fetch();
+      return template;
+    } catch (e) {
+      this.logger_.error("unable to fetch template with id:" + contentId);
     }
   }
 }
