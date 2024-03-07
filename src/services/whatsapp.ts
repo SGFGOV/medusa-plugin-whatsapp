@@ -34,6 +34,7 @@ import { WhatsappSession } from "../types";
 import { ConversationInstance } from "twilio/lib/rest/conversations/v1/conversation";
 import { ParticipantInstance } from "twilio/lib/rest/conversations/v1/conversation/participant";
 import { MessageInstance as ConversationMessageInstance } from "twilio/lib/rest/conversations/v1/conversation/message";
+import { error } from "console";
 export interface WhatsappInterfaceServiceParams {
   manager: EntityManager;
   eventBusService: EventBusService;
@@ -1596,6 +1597,25 @@ export class WhatsappService extends AbstractNotificationService {
       this.logger_.error(
         `unable to send message to conversation with id ${convId} ${e.message}`
       );
+    }
+  }
+  async startWhatsappAgentConversation(
+    sender: string,
+    reciever: string
+  ): Promise<ConversationInstance> {
+    try {
+      const conversation = await this.startConversation({
+        sender: `${process.env.TWILIO_SMS_NUMBER}`,
+        receiver: `${reciever}`,
+      });
+      await this.joinAgent(conversation.sid, sender);
+      await this.joinUser({
+        convId: conversation.sid,
+        phone: reciever,
+      });
+      return conversation;
+    } catch (e) {
+      this.logger_, error("Unable to start agent conversation " + e.message);
     }
   }
 }
