@@ -21,7 +21,7 @@ export default async (
     const timeOut = setTimeout(() => {
       if (!responseSent) {
         responseSent = true;
-        res.set("Content-Type", "text/xml");
+        res.status(200).set("Content-Type", "text/xml");
       }
       res.sendStatus(200);
     }, 4500);
@@ -35,7 +35,7 @@ export default async (
     if (!responseSent) {
       responseSent = true;
       res.set("Content-Type", "text/xml");
-      res.sendStatus(200);
+      res.status(200).send("ok");
     }
   } catch (err) {
     return res.status(400);
