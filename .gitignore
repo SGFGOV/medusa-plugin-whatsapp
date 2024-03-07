@@ -14,10 +14,11 @@ services/
 models/
 subscribers/
 migrations/
+
+jobs/
 loaders/
 index.*
 !index.ts
-
 
 utils/
 types/
