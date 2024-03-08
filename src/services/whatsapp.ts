@@ -35,11 +35,11 @@ import { ParticipantInstance } from "twilio/lib/rest/conversations/v1/conversati
 import { MessageInstance as ConversationMessageInstance } from "twilio/lib/rest/conversations/v1/conversation/message";
 import { error } from "console";
 import { ContentInstance } from "twilio/lib/rest/content/v1/content";
+
 export interface WhatsappInterfaceServiceParams {
   manager: EntityManager;
   eventBusService: EventBusService;
   logger: Logger;
-
   storeService: StoreService;
   orderService: OrderService;
   returnService: ReturnService;
@@ -52,6 +52,7 @@ export interface WhatsappInterfaceServiceParams {
   totalsService: TotalsService;
   productVariantService: ProductVariantService;
   giftCardService: GiftCardService;
+  [key: string]: unknown; // Add this line
 }
 
 export interface WhatsappHandlerInterface<T> {

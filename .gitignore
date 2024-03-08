@@ -5,6 +5,7 @@ node_modules
 **/.DS_Store
 .env*
 /*.js
+!.eslintrc.js
 
 dist
 coverage
