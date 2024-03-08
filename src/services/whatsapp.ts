@@ -1481,7 +1481,7 @@ export class WhatsappService extends AbstractNotificationService {
         await this.twilioClient.conversations.v1.conversations.create({
           timers: { inactive: "PT10M", closed: "PT36000S" },
           state: "active",
-          friendlyName: `${sender}-${receiver}$-${new Date().getDate()}`,
+          friendlyName: `${sender}-${receiver}-${new Date().getDate()}`,
         });
       return conversation;
     } catch (e) {
@@ -1505,24 +1505,33 @@ export class WhatsappService extends AbstractNotificationService {
 
   async joinAgent(
     convId: string,
-    agentRealNumber: string,
-    agentName = "AGENT"
+    agentRealNumber: string
   ): Promise<ParticipantInstance> {
     const messageBinding = {
       address: `whatsapp:${agentRealNumber}`,
       proxyAddress: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
     };
+    const participants = await this.twilioClient.conversations.v1
+      .conversations(convId)
+      .participants.list();
+    const agent = participants.find(
+      (p) =>
+        p.messagingBinding.address == messageBinding.address &&
+        p.messagingBinding.proxyAddress == messageBinding.proxyAddress
+    );
+    if (agent) {
+      return agent;
+    }
     try {
       const agent = await this.twilioClient.conversations.v1
         .conversations(convId)
         .participants.create({
-          identity: agentName,
           messagingBinding: messageBinding,
         });
       return agent;
     } catch (e) {
       this.logger_.error(
-        `unable to add bot to conversation with id ${convId} ${e.message}`
+        `unable to add agent to conversation with id ${convId} ${e.message}`
       );
     }
   }
