@@ -65,12 +65,26 @@ export interface WhatsappHandlerInterface<T> {
     container: MedusaContainer,
     body: T,
     activeSession?: WhatsappSession
-  ) => Promise<ConversationMessageInstance>;
+  ) => Promise<
+    | {
+        body?: string;
+        author?: string;
+        attributes?: Record<string, string>;
+      }
+    | { friendly_name?: string }
+  >;
   whatsappConversationPosthookHandler?: (
     container: MedusaContainer,
     body: T,
     activeSession?: WhatsappSession
-  ) => Promise<ConversationMessageInstance>;
+  ) => Promise<
+    | {
+        body?: string;
+        author?: string;
+        attributes?: Record<string, string>;
+      }
+    | { friendly_name?: string }
+  >;
 }
 
 export interface WhatsappInterfaceOptions {
@@ -187,7 +201,14 @@ export class WhatsappService extends AbstractNotificationService {
   async processReceivedConversationPrehook<T>(
     container: MedusaContainer,
     body: T
-  ): Promise<ConversationMessageInstance> {
+  ): Promise<
+    | {
+        body?: string;
+        author?: string;
+        attributes?: Record<string, string>;
+      }
+    | { friendly_name?: string }
+  > {
     const whatsappHandler = container.resolve(
       this.options.whatsappHandlerInterface
     ) as WhatsappHandlerInterface<T>;
@@ -196,14 +217,14 @@ export class WhatsappService extends AbstractNotificationService {
         container,
         body
       );
-      await this.atomicPhase_(async (manager) => {
-        return await this.eventBusService
-          .withTransaction(manager)
-          .emit(
-            "medusa.whatsapp.converation.prehook.replied",
-            result.toString()
-          );
-      });
+      // await this.atomicPhase_(async (manager) => {
+      //   return await this.eventBusService
+      //     .withTransaction(manager)
+      //     .emit(
+      //       "medusa.whatsapp.converation.prehook.replied",
+      //       result.toString()
+      //     );
+      // });
 
       return result;
     } else {
@@ -213,7 +234,14 @@ export class WhatsappService extends AbstractNotificationService {
   async processReceivedConversationPosthook<T>(
     container: MedusaContainer,
     body: T
-  ): Promise<ConversationMessageInstance> {
+  ): Promise<
+    | {
+        body?: string;
+        author?: string;
+        attributes?: Record<string, string>;
+      }
+    | { friendly_name?: string }
+  > {
     const whatsappHandler = container.resolve(
       this.options.whatsappHandlerInterface
     ) as WhatsappHandlerInterface<T>;

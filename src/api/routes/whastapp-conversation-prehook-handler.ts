@@ -16,11 +16,13 @@ export default async (req: WhatsappRequest, res: Response): Promise<void> => {
       if (!responseSent) {
         responseSent = true;
         res.set("Content-Type", "text/xml");
-        res.status(200).send("ok");
+        res.status(200).send({
+          body: "Hi, I need more time, will that be ok ? Please tell me yes or no",
+        });
       }
-    }, 4500);
+    }, 4900);
 
-    await service.processReceivedConversationPrehook(
+    const response = await service.processReceivedConversationPrehook(
       req.scope,
       whatsappMessage
     );
@@ -29,7 +31,7 @@ export default async (req: WhatsappRequest, res: Response): Promise<void> => {
     if (!responseSent) {
       responseSent = true;
       res.set("Content-Type", "text/xml");
-      res.status(200).send("ok");
+      res.status(200).send(response);
     }
   } catch (err) {
     res.status(400);
