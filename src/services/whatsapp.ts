@@ -1518,7 +1518,7 @@ export class WhatsappService extends AbstractNotificationService {
     const agent = participants.find(
       (p) =>
         p.messagingBinding.address == messageBinding.address &&
-        p.messagingBinding.proxyAddress == messageBinding.proxyAddress
+        p.messagingBinding.proxy_address == messageBinding.proxyAddress
     );
     if (agent) {
       return agent;
