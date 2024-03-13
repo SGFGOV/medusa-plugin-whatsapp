@@ -1651,9 +1651,22 @@ export class WhatsappService extends AbstractNotificationService {
   }
   async startWhatsappAgentConversation(
     sender: string,
-    receiver: string
+    receiver: string,
+    agentRealNumber?: string,
+    otherPartyRealNumber?: string
   ): Promise<ConversationInstance> {
     try {
+      try {
+        const conversation = await this.findActiveConversationBetween2parties({
+          agentRealNumber,
+          otherParty: otherPartyRealNumber,
+        });
+        if (conversation) {
+          return;
+        }
+      } catch (e) {
+        this.logger_.error(`existing converation not found ${e.message}`);
+      }
       const conversation = await this.startConversation({
         sender: `${sender}`,
         receiver: `${receiver}`,
@@ -1677,6 +1690,53 @@ export class WhatsappService extends AbstractNotificationService {
       return template;
     } catch (e) {
       this.logger_.error("unable to fetch template with id:" + contentId);
+    }
+  }
+
+  async findActiveConversationBetween2parties({
+    agentRealNumber,
+    otherParty,
+  }: {
+    agentRealNumber: string;
+    otherParty: string;
+  }) {
+    const messageBindingAgent = {
+      address: `whatsapp:${agentRealNumber}`,
+      proxyAddress: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
+    };
+
+    const messageBindingOtherParty = {
+      address: `whatsapp:${otherParty}`,
+      proxyAddress: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
+    };
+
+    try {
+      const results =
+        await this.twilioClient.conversations.v1.conversations.list({});
+
+      const findUser = (messageBinding, participants) =>
+        participants.find(
+          (p) =>
+            p.messagingBinding.address == messageBinding.address &&
+            p.messagingBinding.proxy_address == messageBinding.proxyAddress
+        );
+
+      for (const result of results) {
+        const conversationParticipants = await result.participants().list();
+        const firstuser = findUser(
+          messageBindingAgent,
+          conversationParticipants
+        );
+        const seconduser = findUser(
+          messageBindingOtherParty,
+          conversationParticipants
+        );
+        if (firstuser && seconduser && result.state == "active") {
+          return result;
+        }
+      }
+    } catch (e) {
+      this.logger_.error(`unable to find conversation ${e.message}`);
     }
   }
 }
