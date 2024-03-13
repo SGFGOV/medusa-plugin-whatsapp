@@ -1575,6 +1575,17 @@ export class WhatsappService extends AbstractNotificationService {
       address: `whatsapp:${phone}`,
       proxyAddress: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
     };
+    const participants = await this.twilioClient.conversations.v1
+      .conversations(convId)
+      .participants.list();
+    const user = participants.find(
+      (p) =>
+        p.messagingBinding.address == messageBinding.address &&
+        p.messagingBinding.proxy_address == messageBinding.proxyAddress
+    );
+    if (user) {
+      return user;
+    }
     try {
       const user = await this.twilioClient.conversations.v1
         .conversations(convId)
