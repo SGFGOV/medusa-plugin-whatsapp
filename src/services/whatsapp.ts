@@ -1662,7 +1662,7 @@ export class WhatsappService extends AbstractNotificationService {
           otherParty: otherPartyRealNumber,
         });
         if (conversation) {
-          return;
+          return conversation;
         }
       } catch (e) {
         this.logger_.error(`existing converation not found ${e.message}`);
