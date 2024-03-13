@@ -1722,17 +1722,26 @@ export class WhatsappService extends AbstractNotificationService {
         );
 
       for (const result of results) {
-        const conversationParticipants = await result.participants().list();
-        const firstuser = findUser(
-          messageBindingAgent,
-          conversationParticipants
-        );
-        const seconduser = findUser(
-          messageBindingOtherParty,
-          conversationParticipants
-        );
-        if (firstuser && seconduser && result.state == "active") {
-          return result;
+        const conversationParticipants =
+          await this.twilioClient.conversations.v1
+            .conversations(result.sid)
+            .participants.list();
+        if (conversationParticipants.length == 0) {
+          await this.twilioClient.conversations.v1
+            .conversations(result.sid)
+            .remove();
+        } else {
+          const firstuser = findUser(
+            messageBindingAgent,
+            conversationParticipants
+          );
+          const seconduser = findUser(
+            messageBindingOtherParty,
+            conversationParticipants
+          );
+          if (firstuser && seconduser && result.state == "active") {
+            return result;
+          }
         }
       }
     } catch (e) {
