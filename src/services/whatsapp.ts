@@ -1722,14 +1722,17 @@ export class WhatsappService extends AbstractNotificationService {
         );
 
       for (const result of results) {
-        const conversationParticipants =
-          await this.twilioClient.conversations.v1
-            .conversations(result.sid)
-            .participants.list();
+        const conversationParticipants = await result.participants().list();
         if (conversationParticipants.length == 0) {
-          await this.twilioClient.conversations.v1
-            .conversations(result.sid)
-            .remove();
+          try {
+            await this.twilioClient.conversations.v1
+              .conversations(result.sid)
+              .remove();
+          } catch (e) {
+            this.logger_.error(
+              `unable to remove conversation ${result.sid} ${e.message}`
+            );
+          }
         } else {
           const firstuser = findUser(
             messageBindingAgent,
@@ -1741,6 +1744,16 @@ export class WhatsappService extends AbstractNotificationService {
           );
           if (firstuser && seconduser && result.state == "active") {
             return result;
+          } else {
+            try {
+              await this.twilioClient.conversations.v1
+                .conversations(result.sid)
+                .remove();
+            } catch (e) {
+              this.logger_.error(
+                `unable to remove conversation ${result.sid} ${e.message}`
+              );
+            }
           }
         }
       }
