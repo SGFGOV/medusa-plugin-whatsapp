@@ -1671,10 +1671,10 @@ export class WhatsappService extends AbstractNotificationService {
         sender: `${sender}`,
         receiver: `${receiver}`,
       });
-      await this.joinAgent(conversation.sid, sender);
+      await this.joinAgent(conversation.sid, agentRealNumber);
       await this.joinUser({
         convId: conversation.sid,
-        phone: receiver,
+        phone: otherPartyRealNumber,
       });
       return conversation;
     } catch (e) {
