@@ -1564,6 +1564,31 @@ export class WhatsappService extends AbstractNotificationService {
       );
     }
   }
+  async findOldConversations(
+    phone: string,
+    messageBinding: { address: string; proxyAddress: string }
+  ) {
+    const users = await this.twilioClient.conversations.users.list();
+    const userConversations = users.filter(
+      (u) => u.userConversations().length != 0
+    );
+    const oldConversation = userConversations.find(async (uc) => {
+      const conversationParticipants = await this.twilioClient.conversations
+        .conversations(uc.sid)
+        .participants.list();
+      const particpant = conversationParticipants.find((p) => {
+        p.messagingBinding.address == messageBinding.address;
+        p.messagingBinding.proxy_address == messageBinding.proxyAddress;
+      });
+      if (particpant) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+    return await oldConversation.userConversations().list();
+  }
+
   async joinUser({
     convId,
     phone,
@@ -1575,17 +1600,17 @@ export class WhatsappService extends AbstractNotificationService {
       address: `whatsapp:${phone}`,
       proxyAddress: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
     };
-    const participants = await this.twilioClient.conversations.v1
-      .conversations(convId)
-      .participants.list();
-    const user = participants.find(
-      (p) =>
-        p.messagingBinding.address == messageBinding.address &&
-        p.messagingBinding.proxy_address == messageBinding.proxyAddress
+    const oldConversations = await this.findOldConversations(
+      phone,
+      messageBinding
     );
-    if (user) {
-      return user;
-    }
+    oldConversations.map(
+      async (o) =>
+        await this.twilioClient.conversations
+          .conversations(o.conversationSid)
+          .remove()
+    );
+
     try {
       const user = await this.twilioClient.conversations.v1
         .conversations(convId)
