@@ -10,7 +10,14 @@ export default (options: WhatsappInterfaceOptions, path: string) => {
     if (!params || params?.length == 0) {
       requestIsValid = false;
     } else {
-      const url = `${options.medusaServerProtocol}://${options.medusaServerHost}:${options.medusaServerPort}${path}`;
+      let url;
+      if (options.medusaServerPort || options.medusaServerPort != "") {
+        url = `${options.medusaServerProtocol}://${options.medusaServerHost}:${options.medusaServerPort}${path}`;
+      } else if (options.medusaServerProtocol == "https") {
+        url = `${options.medusaServerProtocol}://${options.medusaServerHost}${path}`;
+      } else if (!options.medusaServerPort || options.medusaServerPort == "") {
+        url = `${options.medusaServerProtocol}://${options.medusaServerHost}${path}`;
+      }
 
       requestIsValid = twilio.validateRequest(
         options.auth_token,
