@@ -11,10 +11,10 @@ export default (options: WhatsappInterfaceOptions, path: string) => {
       requestIsValid = false;
     } else {
       let url;
-      if (options.medusaServerPort || options.medusaServerPort != "") {
-        url = `${options.medusaServerProtocol}://${options.medusaServerHost}:${options.medusaServerPort}${path}`;
-      } else if (options.medusaServerProtocol == "https") {
+      if (options.medusaServerProtocol.toLowerCase() == "https") {
         url = `${options.medusaServerProtocol}://${options.medusaServerHost}${path}`;
+      } else if (options.medusaServerPort && options.medusaServerPort != "") {
+        url = `${options.medusaServerProtocol}://${options.medusaServerHost}:${options.medusaServerPort}${path}`;
       } else if (!options.medusaServerPort || options.medusaServerPort == "") {
         url = `${options.medusaServerProtocol}://${options.medusaServerHost}${path}`;
       }
