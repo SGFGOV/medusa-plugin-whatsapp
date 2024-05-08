@@ -1683,7 +1683,7 @@ export class WhatsappService extends AbstractNotificationService {
     const theParticipant = participants.find(
       (p) => p.messagingBinding.address == messageBinding.address
     );
-    const result = await theParticipant?.remove();
+    const result = theParticipant ? await theParticipant?.remove() : true;
     return result ?? false;
   }
 
