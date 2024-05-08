@@ -1243,7 +1243,7 @@ export class WhatsappService extends AbstractNotificationService {
 
     const refundAmount = swap.return_order.refund_amount;
     const expandedOrder = await this.orderService_.retrieve(order.id, {
-      relations: ["fulfilments", "fulfilments.tracking_links"],
+      relations: ["fulfillments", "fulfillments.tracking_links"],
     });
 
     const shipment = expandedOrder.fulfillments.find(
@@ -1456,14 +1456,14 @@ export class WhatsappService extends AbstractNotificationService {
     sender: string;
     receiver: string;
     contentSid: string;
-    contentVaribles: string;
+    contentVariables: string;
   } {
     return {
       id: `msg_whatsapp_${messageId}`,
       sender: process.env.TWILIO_SMS_NUMBER,
       receiver: phone,
       contentSid: contentSid,
-      contentVaribles: JSON.stringify(parameters),
+      contentVariables: JSON.stringify(parameters),
     };
   }
 
@@ -1520,20 +1520,22 @@ export class WhatsappService extends AbstractNotificationService {
     }
   }
 
-  async getExistingConversation(convId: string): Promise<ConversationInstance> {
+  async getExistingConversation(
+    conversationId: string
+  ): Promise<ConversationInstance> {
     try {
       return await this.twilioClient.conversations.v1
-        .conversations(convId)
+        .conversations(conversationId)
         .fetch();
     } catch (e) {
       this.logger_.error(
-        `unable to fetech conversation with id ${convId} ${e.message}`
+        `unable to fetech conversation with id ${conversationId} ${e.message}`
       );
     }
   }
 
   async joinAgent(
-    convId: string,
+    conversationId: string,
     agentRealNumber: string
   ): Promise<ParticipantInstance> {
     const messageBinding = {
@@ -1541,7 +1543,7 @@ export class WhatsappService extends AbstractNotificationService {
       proxyAddress: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
     };
     const participants = await this.twilioClient.conversations.v1
-      .conversations(convId)
+      .conversations(conversationId)
       .participants.list();
     const agent = participants.find(
       (p) =>
@@ -1553,14 +1555,14 @@ export class WhatsappService extends AbstractNotificationService {
     }
     try {
       const agent = await this.twilioClient.conversations.v1
-        .conversations(convId)
+        .conversations(conversationId)
         .participants.create({
           messagingBinding: messageBinding,
         });
       return agent;
     } catch (e) {
       this.logger_.error(
-        `unable to add agent to conversation with id ${convId} ${e.message}`
+        `unable to add agent to conversation with id ${conversationId} ${e.message}`
       );
     }
   }
@@ -1593,10 +1595,10 @@ export class WhatsappService extends AbstractNotificationService {
   }
 
   async joinUser({
-    convId,
+    conversationId,
     phone,
   }: {
-    convId: string;
+    conversationId: string;
     phone: string;
   }): Promise<ParticipantInstance> {
     const messageBinding = {
@@ -1616,20 +1618,20 @@ export class WhatsappService extends AbstractNotificationService {
 
     try {
       const user = await this.twilioClient.conversations.v1
-        .conversations(convId)
+        .conversations(conversationId)
         .participants.create({
           messagingBinding: messageBinding,
         });
       return user;
     } catch (e) {
       this.logger_.error(
-        `unable to add user to conversation with id ${convId} ${e.message}`
+        `unable to add user to conversation with id ${conversationId} ${e.message}`
       );
     }
   }
 
   async sendConversationMessageFromAgent(
-    convId: string,
+    conversationId: string,
     message: string,
     agentNumber: string
   ): Promise<ConversationMessageInstance> {
@@ -1638,7 +1640,7 @@ export class WhatsappService extends AbstractNotificationService {
     // and set the environment variables. See http://twil.io/secure
     try {
       const messageInstance = await this.twilioClient.conversations.v1
-        .conversations(convId)
+        .conversations(conversationId)
         .messages.create({
           author: `whatsapp:${agentNumber}`,
           body: message,
@@ -1646,25 +1648,25 @@ export class WhatsappService extends AbstractNotificationService {
       return messageInstance;
     } catch (e) {
       this.logger_.error(
-        `unable to send message to conversation with id ${convId} ${e.message}`
+        `unable to send message to conversation with id ${conversationId} ${e.message}`
       );
     }
   }
 
   async sendConversationContentTemplateFromAgent({
-    convId,
+    conversationId,
     contentSid,
     contentVariables,
     agentNumber,
   }: {
-    convId: string;
+    conversationId: string;
     contentSid: string;
     contentVariables: Record<string, string>;
     agentNumber: string;
   }): Promise<ConversationMessageInstance> {
     try {
       const messageInstance = await this.twilioClient.conversations.v1
-        .conversations(convId)
+        .conversations(conversationId)
         .messages.create({
           author: `whatsapp:${agentNumber}`,
           contentSid,
@@ -1673,7 +1675,7 @@ export class WhatsappService extends AbstractNotificationService {
       return messageInstance;
     } catch (e) {
       this.logger_.error(
-        `unable to send message to conversation with id ${convId} ${e.message}`
+        `unable to send message to conversation with id ${conversationId} ${e.message}`
       );
     }
   }
@@ -1693,7 +1695,7 @@ export class WhatsappService extends AbstractNotificationService {
           return conversation;
         }
       } catch (e) {
-        this.logger_.error(`existing converation not found ${e.message}`);
+        this.logger_.error(`existing conversation not found ${e.message}`);
       }
       const conversation = await this.startConversation({
         sender: `${sender}`,
@@ -1701,7 +1703,7 @@ export class WhatsappService extends AbstractNotificationService {
       });
       await this.joinAgent(conversation.sid, agentRealNumber);
       await this.joinUser({
-        convId: conversation.sid,
+        conversationId: conversation.sid,
         phone: otherPartyRealNumber,
       });
       return conversation;
