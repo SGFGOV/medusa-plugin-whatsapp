@@ -1586,7 +1586,10 @@ export class WhatsappService extends AbstractNotificationService {
         return false;
       }
     });
-    return await oldConversation.userConversations().list();
+    if (oldConversation) {
+      return await oldConversation.userConversations().list();
+    }
+    return [];
   }
 
   async joinUser({
