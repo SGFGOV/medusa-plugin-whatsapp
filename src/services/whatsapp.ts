@@ -1498,6 +1498,64 @@ export class WhatsappService extends AbstractNotificationService {
     }
   }
 
+  async stopConversation({ conversationId }: { conversationId: string }) {
+    const conversation =
+      this.twilioClient.conversations.v1.conversations.get(conversationId);
+
+    const participants = await conversation.participants.list();
+    const allConversations = await Promise.all(
+      participants.map(async (p) => await p.remove())
+    );
+    if (!allConversations.some((p) => p == false)) {
+      await conversation.remove();
+    } else {
+      this.logger_.error("unable to remove conversation ");
+    }
+  }
+
+  async isInConversation(
+    phoneNumber: string,
+    proxyPhoneNumber: string = process.env.TWILIO_WHATSAPP_NUMBER
+  ) {
+    const messageBinding = {
+      address: `whatsapp:${phoneNumber}`,
+      proxyAddress: `whatsapp:${proxyPhoneNumber}`,
+    };
+    const conversations =
+      await this.twilioClient.conversations.v1.conversations.list();
+    for (const conversation of conversations) {
+      const participants = await conversation.participants().list();
+      const foundParticipant = participants.find((f) => {
+        const result =
+          f.messagingBinding.address == messageBinding.address &&
+          f.messagingBinding.proxyAddress == messageBinding.proxyAddress;
+        return result;
+      });
+      if (foundParticipant) {
+        return true;
+      }
+    }
+    return false;
+  }
+  async isParticipantInConversation(participant: ParticipantInstance) {
+    const messageBinding = participant.messagingBinding;
+    const conversations =
+      await this.twilioClient.conversations.v1.conversations.list();
+    for (const conversation of conversations) {
+      const participants = await conversation.participants().list();
+      const foundParticipant = participants.find((f) => {
+        const result =
+          f.messagingBinding.address == messageBinding.address &&
+          f.messagingBinding.proxyAddress == messageBinding.proxyAddress;
+        return result;
+      });
+      if (foundParticipant) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   async startConversation({
     sender,
     receiver,
@@ -1512,6 +1570,7 @@ export class WhatsappService extends AbstractNotificationService {
           state: "active",
           friendlyName: `${sender}-${receiver}-${new Date().getDate()}`,
         });
+
       return conversation;
     } catch (e) {
       this.logger_.error(
@@ -1592,6 +1651,40 @@ export class WhatsappService extends AbstractNotificationService {
       return await oldConversation.userConversations().list();
     }
     return [];
+  }
+
+  async releaseAgent({
+    conversationId,
+    agentPhoneNumber,
+  }: {
+    conversationId: string;
+    agentPhoneNumber: string;
+  }) {
+    return this.releaseUser({
+      conversationId,
+      phone: agentPhoneNumber,
+    });
+  }
+
+  async releaseUser({
+    conversationId,
+    phone,
+  }: {
+    conversationId: string;
+    phone: string;
+  }): Promise<boolean> {
+    const messageBinding = {
+      address: `whatsapp:${phone}`,
+      proxyAddress: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
+    };
+    const participants = await this.twilioClient.conversations
+      .conversations(conversationId)
+      .participants.list();
+    const theParticipant = participants.find(
+      (p) => p.messagingBinding.address == messageBinding.address
+    );
+    const result = await theParticipant.remove();
+    return result;
   }
 
   async joinUser({
