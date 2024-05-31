@@ -1,10 +1,11 @@
 import { describe, it, expect, beforeEach, jest } from "@jest/globals";
-import { WhatsappInterfaceService } from "../whatsapp-interface";
+import { WhatsappService } from "../whatsapp";
 import { MockManager } from "medusa-test-utils";
 import mockedEventBusService from "../__mocks__/event-bus";
 import { MedusaContainer } from "@medusajs/medusa/dist/types/global";
 import dotenv from "dotenv";
 import { Twilio } from "twilio";
+import { orderServiceMock, cartServiceMock } from "../__mocks__/service.mocks";
 
 const config = dotenv.config();
 
@@ -12,6 +13,9 @@ const TWILIO_ACCOUNT_SID =
   config.parsed?.TWILIO_AUTH_SID ||
   "ACDummy"; /* user production keys when testing with sandbox */
 const TWILIO_ACCOUNT_TOKEN = config.parsed?.TWILIO_AUTH_TOKEN ?? "dummy";
+const TWILIO_SAMPLE_WHATSAPP_CONTENT_SID =
+  config.parsed?.TWILIO_SAMPLE_WHATSAPP_CONTENT_SID ?? "dummy";
+
 const TEST_TWILIO_SANDBOX_NUMBER =
   config.parsed?.TEST_SEND_NUMBER ??
   "00000"; /* the number you created the sandbox with */
@@ -32,13 +36,25 @@ const testOptions = {
 
 describe("WhatsappService", () => {
   describe("Sending Message", () => {
-    let myWhatsappService: WhatsappInterfaceService;
+    let myWhatsappService: WhatsappService;
     beforeEach(() => {
-      myWhatsappService = new WhatsappInterfaceService(
+      myWhatsappService = new WhatsappService(
         {
           logger: console as any,
           eventBusService: mockedEventBusService as any,
-          manager: MockManager,
+          manager: MockManager as any,
+          orderService: orderServiceMock as any,
+          cartService: cartServiceMock as any,
+          storeService: undefined,
+          returnService: undefined,
+          giftCardService: undefined,
+          swapService: undefined,
+          lineItemService: undefined,
+          fulfillmentProviderService: undefined,
+          fulfillmentService: undefined,
+          claimService: undefined,
+          totalsService: undefined,
+          productVariantService: undefined,
         },
         testOptions
       );
@@ -65,6 +81,36 @@ describe("WhatsappService", () => {
           if (error) {
             console.log(error);
           } else {
+            return done;
+          }
+        }
+      );
+      expect(result).toBeDefined();
+    });
+    it("initiate-sandbox-qr", async () => {
+      console.log("Testing qr");
+      const sender = TEST_TWILIO_SANDBOX_NUMBER;
+      const receiver = TEST_RECEIVER_NUMBER; /* sandbox member number */
+      const message = JSON.stringify({
+        contentSid: TWILIO_SAMPLE_WHATSAPP_CONTENT_SID,
+        contentVariables: JSON.stringify({
+          1: "test",
+          2: "01-01-2024",
+          3: "1234/1223",
+        }),
+      });
+
+      const result = await myWhatsappService.sendTextMessage(
+        sender,
+        receiver,
+        message,
+        undefined,
+        (error, done) => {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log("Testing qr --done");
+
             return done;
           }
         }

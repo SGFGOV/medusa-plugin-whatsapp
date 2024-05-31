@@ -1,14 +1,15 @@
 import { describe, it, expect, beforeEach, jest } from "@jest/globals";
 import twilio from "twilio";
-import {
-  WhatsappInterfaceService,
-  WhatsappHandlerInterface,
-} from "../whatsapp-interface";
+import { WhatsappService } from "../whatsapp";
 import { MockManager } from "medusa-test-utils";
 import mockedEventBusService from "../__mocks__/event-bus";
 import { MedusaContainer } from "@medusajs/medusa/dist/types/global";
 import dotenv from "dotenv";
-import { mockServer } from "../__mocks__/service.mocks";
+import {
+  cartServiceMock,
+  mockServer,
+  orderServiceMock,
+} from "../__mocks__/service.mocks";
 import { asFunction, createContainer } from "awilix";
 import whatsAppRoutes from "../../api";
 import getSignature from "../../utils/generate-signature";
@@ -43,8 +44,8 @@ const testOptions = {
 } as any;
 
 describe("WhatsappService", () => {
-  let myWhatsappService: WhatsappInterfaceService;
- /* describe("Sending Message", () => {
+  let myWhatsappService: WhatsappService;
+  /* describe("Sending Message", () => {
     
     beforeEach(() => {
        /*jest.spyOn(twilio, "TwilioSDK").mockImplementation((a, b, c): any => {return{
@@ -83,32 +84,47 @@ describe("WhatsappService", () => {
     });
   });*/
   describe("Recieving  Message", () => {
-    let myWhatsappService: WhatsappInterfaceService;
+    let myWhatsappService: WhatsappService;
     let app;
+    const container = createContainer();
     beforeAll(() => {
-      myWhatsappService = new WhatsappInterfaceService(
+      myWhatsappService = new WhatsappService(
         {
           logger: console as any,
           eventBusService: mockedEventBusService() as any,
-          manager: MockManager,
+          manager: MockManager as any,
+          orderService: orderServiceMock as any,
+          cartService: cartServiceMock as any,
+          storeService: undefined,
+          returnService: undefined,
+          giftCardService: undefined,
+          swapService: undefined,
+          lineItemService: undefined,
+          fulfillmentProviderService: undefined,
+          fulfillmentService: undefined,
+          claimService: undefined,
+          totalsService: undefined,
+          productVariantService: undefined,
         },
         testOptions
       );
       app = mockServer() as Router;
-      const container = createContainer();
+
       container.register("manager", asFunction(() => MockManager).singleton());
       container.register(
         "eventBusService",
         asFunction(() => mockedEventBusService()).singleton()
       );
       container.register(
-        "whatsappInterfaceService",
+        "whatsappService",
         asFunction(() => myWhatsappService).singleton()
       );
       container.register(
         "whatsappHandlerInterface",
         asFunction(() => whatsappHandlerInterface()).singleton()
       );
+
+      container.register("logger", asFunction(() => console).singleton());
       app.use((req, _res, next) => {
         req["scope"] = container.createScope() as any;
         next();
@@ -150,7 +166,10 @@ describe("WhatsappService", () => {
     });
 
     it("Sanity Check Api", async () => {
-      const result = await supertest(app).post("/").set("Accept", "text/xml");
+      const result = await supertest(app)
+        .post("/")
+        .set("Accept", "text/xml")
+        .send();
       expect(result.status).toBe(404);
     });
 
@@ -175,6 +194,11 @@ describe("WhatsappService", () => {
         `${testOptions.medusaServerProtocol}://` +
         `${testOptions.medusaServerHost}:` +
         `${testOptions.medusaServerPort}/whatsapp/received`;
+      app.use((req, _res, next) => {
+        req["scope"] = container.createScope() as any;
+        next();
+      });
+
       const signature = await getSignature(TWILIO_ACCOUNT_TOKEN, url, params);
       const result = await supertest(app)
         .post("/whatsapp/received")
@@ -182,7 +206,10 @@ describe("WhatsappService", () => {
         .set("accept", "text")
         .set("x-twilio-signature", signature)
         .send(params);
-      // .expect(200);
+      // the below code is only for debugging the tests
+      //   .expect((response) => {
+      //     console.log(response);
+      //   });
       expect(result.status).toBe(200);
       expect(result?.body).toBeDefined();
       expect(result?.body.error).toBeUndefined();

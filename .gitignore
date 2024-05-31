@@ -5,6 +5,7 @@ node_modules
 **/.DS_Store
 .env*
 /*.js
+!.eslintrc.js
 
 dist
 coverage
@@ -14,12 +15,18 @@ services/
 models/
 subscribers/
 migrations/
+
+jobs/
 loaders/
 index.*
-utils/
-src/coverage
+!index.ts
 
-!src/services
+utils/
+types/
+!src/*
+src/coverage
+*.log
+
 
 ./tsconfig.tsbuildinfo
 ./package-lock.json

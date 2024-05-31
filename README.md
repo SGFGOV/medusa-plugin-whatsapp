@@ -49,3 +49,5 @@ add to your plugins list
   }
 
 ```
+
+the whatsapp handler service need to implement the interface
