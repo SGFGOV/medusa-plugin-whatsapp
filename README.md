@@ -54,7 +54,7 @@ the whatsapp handler service need to implement the interface - WhatsappHandlerIn
 
 eg : 
 ```
-// please note you'll have to configure the message receive hooks in twilio to point to /whatsapp/received
+// please note you'll have to configure the message receive hooks in twilio to point to <Your server url>/whatsapp/received
 
 export default class myService implements WhatsappHandlerInterface {
 
@@ -62,7 +62,7 @@ export default class myService implements WhatsappHandlerInterface {
     // your code to process the incoming message
   }
 
-// please note you'll have to configure the global conversation hooks in twilio to point to /whatsapp/received
+// please note you'll have to configure the global conversation hooks in twilio to point to <Your server url>/whatsapp/prepare
 
 
 whatsappConversationPrehookHandler: (
@@ -79,6 +79,29 @@ whatsappConversationPrehookHandler: (
   {
     // your code to handle the incoming conversation message
   }
+
+similarly the conversation posthookhandler can be configured with the post hook in twilio pointing to <Your server url>/whatsapp/do
+
+whatsappConversationPosthookHandler (container: MedusaContainer, body: T, activeSession?,WhatsappSession) => Promise<{
+        body?: string;
+        author?: string;
+        attributes?: Record<string, string>;
+    } | {
+        friendly_name?: string;
+    }>{
+      // your code
+
+    }
+
 }
 
+
+
 ```
+
+## Sponsorship
+If you find the Medusa-Plugin-Whatsapp valuable and would like to support its development, consider sponsoring us on GitHub. Your sponsorship will help us continue to improve and maintain this plugin, bringing two popular platforms together.
+
+By sponsoring, you'll gain access to exclusive benefits and features, and you'll be making a difference in the developer community. Help us shape the future of this plugin by sponsoring today and will help facilitating more open source contributions from me.
+
+[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-green?logo=GitHub)](https://github.com/sponsors/SGFGOV)
