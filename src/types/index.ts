@@ -1,4 +1,6 @@
+import { MedusaContainer } from "@medusajs/medusa";
 import { Request } from "express";
+import MessagingResponse from "twilio/lib/twiml/MessagingResponse";
 
 export interface WhatsappRequest extends Request {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -57,4 +59,36 @@ export interface WhatsappConversation {
   AccountSid: string;
   Source: string;
   ConversationSid: string;
+}
+
+export interface WhatsappHandlerInterface<T> {
+  whatsappHandler: (
+    container: MedusaContainer,
+    body: T,
+    activeSession: WhatsappSession
+  ) => Promise<MessagingResponse>;
+  whatsappConversationPrehookHandler: (
+    container: MedusaContainer,
+    body: T,
+    activeSession?: WhatsappSession
+  ) => Promise<
+    | {
+        body?: string;
+        author?: string;
+        attributes?: Record<string, string>;
+      }
+    | { friendly_name?: string }
+  >;
+  whatsappConversationPosthookHandler?: (
+    container: MedusaContainer,
+    body: T,
+    activeSession?: WhatsappSession
+  ) => Promise<
+    | {
+        body?: string;
+        author?: string;
+        attributes?: Record<string, string>;
+      }
+    | { friendly_name?: string }
+  >;
 }

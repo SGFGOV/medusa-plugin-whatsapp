@@ -26,10 +26,12 @@ export default async (
       res.sendStatus(200);
     }, 4500);
 
-    await service.processReceivedConversationPosthook(
-      req.scope,
-      whatsappMessage
-    );
+    if (service.processReceivedConversationPosthook) {
+      await service.processReceivedConversationPosthook(
+        req.scope,
+        whatsappMessage
+      );
+    }
     clearTimeout(timeOut);
 
     if (!responseSent) {
