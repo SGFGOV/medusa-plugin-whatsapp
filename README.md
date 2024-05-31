@@ -50,4 +50,35 @@ add to your plugins list
 
 ```
 
-the whatsapp handler service need to implement the interface
+the whatsapp handler service need to implement the interface - WhatsappHandlerInterface
+
+eg : 
+```
+// please note you'll have to configure the message receive hooks in twilio to point to /whatsapp/received
+
+export default class myService implements WhatsappHandlerInterface {
+
+  whatsappHandler (container: MedusaContainer, body: T, activeSession: WhatsappSession):Promise<MessagingResponse>; {
+    // your code to process the incoming message
+  }
+
+// please note you'll have to configure the global conversation hooks in twilio to point to /whatsapp/received
+
+
+whatsappConversationPrehookHandler: (
+    container: MedusaContainer,
+    body: T,
+    activeSession?: WhatsappSession
+  ) => Promise<
+    | {
+        body?: string;
+        author?: string;
+        attributes?: Record<string, string>;
+      }
+    | { friendly_name?: string }>
+  {
+    // your code to handle the incoming conversation message
+  }
+}
+
+```
