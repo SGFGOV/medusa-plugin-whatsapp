@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import e, { Request, Response } from "express";
 import MessagingResponse from "twilio/lib/twiml/MessagingResponse";
 import { WhatsappService } from "../../services/whatsapp";
 import { MessagePage } from "twilio/lib/rest/api/v2010/account/message";

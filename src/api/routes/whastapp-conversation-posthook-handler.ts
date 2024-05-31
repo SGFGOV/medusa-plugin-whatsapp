@@ -5,7 +5,6 @@ import {
   WhatsappRequest,
   WhatsappLocationMessage,
 } from "types";
-import { Logger } from "@medusajs/medusa";
 
 export default async (
   req: WhatsappRequest,

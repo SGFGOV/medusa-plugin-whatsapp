@@ -42,7 +42,7 @@ describe("WhatsappService", () => {
         {
           logger: console as any,
           eventBusService: mockedEventBusService as any,
-          manager: MockManager,
+          manager: MockManager as any,
           orderService: orderServiceMock as any,
           cartService: cartServiceMock as any,
           storeService: undefined,

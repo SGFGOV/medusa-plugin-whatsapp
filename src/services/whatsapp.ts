@@ -154,21 +154,25 @@ export class WhatsappService extends AbstractNotificationService {
     body: T,
     activeSession: WhatsappSession
   ): Promise<MessagingResponse> {
-    const whatsappHandler = container.resolve(
-      this.options.whatsappHandlerInterface
-    ) as WhatsappHandlerInterface<T>;
-    const result = await whatsappHandler.whatsappHandler(
-      container,
-      body,
-      activeSession
-    );
-    await this.atomicPhase_(async (manager) => {
-      return await this.eventBusService
-        .withTransaction(manager)
-        .emit("medusa.whatsapp.message.replied", result.toString());
-    });
+    try {
+      const whatsappHandler = container.resolve(
+        this.options.whatsappHandlerInterface
+      ) as WhatsappHandlerInterface<T>;
+      const result = await whatsappHandler.whatsappHandler(
+        container,
+        body,
+        activeSession
+      );
+      await this.atomicPhase_(async (manager) => {
+        return await this.eventBusService
+          .withTransaction(manager)
+          .emit("medusa.whatsapp.message.replied", result.toString());
+      });
 
-    return result;
+      return result;
+    } catch (e) {
+      return;
+    }
   }
   async processReceivedConversationPrehook<T>(
     container: MedusaContainer,

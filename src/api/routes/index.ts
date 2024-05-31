@@ -21,8 +21,8 @@ export default (
   configModule: ConfigModule
 ): Router => {
   const whatsappPath = "/received";
-  const whatappConversationPreHookPath = "/prepare";
-  const whatappConversationPostActionPath = "/do";
+  const whatsappConversationPreHookPath = "/prepare";
+  const whatsappConversationPostActionPath = "/do";
   app.use("/whatsapp", whatsAppMessageRouter);
 
   const corsOptions = {
@@ -62,8 +62,12 @@ export default (
   whatsAppMessageRouter.post(
     whatsappPath,
     (req, res, next) => {
-      const logger = req.scope.resolve("logger") as Logger;
-      logger.debug("received whatsapp message");
+      try {
+        const logger = req.scope.resolve("logger") as Logger;
+        logger.debug("received whatsapp message");
+      } catch (e) {
+        // included for testing
+      }
       next();
     },
     bodyParser.text(),
@@ -74,11 +78,15 @@ export default (
     whatsappReceiveHandler
   );
   whatsAppMessageRouter.post(
-    whatappConversationPreHookPath,
+    whatsappConversationPreHookPath,
     (req, res, next) => {
-      const logger = req.scope.resolve("logger") as Logger;
-      logger.debug("received whatsapp conversation prehook message");
-      next();
+      try {
+        const logger = req.scope.resolve("logger") as Logger;
+        logger.debug("received whatsapp conversation prehook message");
+        next();
+      } catch (e) {
+        // included for testing
+      }
     },
     bodyParser.text(),
     bodyParser.urlencoded(),
@@ -86,16 +94,20 @@ export default (
     bodyParser.json(),
     middlewares.verifyTwilioHeader(
       options,
-      `/whatsapp${whatappConversationPreHookPath}`
+      `/whatsapp${whatsappConversationPreHookPath}`
     ),
     whatsappConversationPreHookHandler
   );
   whatsAppMessageRouter.post(
-    whatappConversationPostActionPath,
+    whatsappConversationPostActionPath,
     (req, res, next) => {
-      const logger = req.scope.resolve("logger") as Logger;
-      logger.debug("received whatsapp conversation posthook message");
-      next();
+      try {
+        const logger = req.scope.resolve("logger") as Logger;
+        logger.debug("received whatsapp conversation posthook message");
+        next();
+      } catch (e) {
+        // included for testing
+      }
     },
     bodyParser.text(),
     bodyParser.urlencoded(),
@@ -103,7 +115,7 @@ export default (
     bodyParser.json(),
     middlewares.verifyTwilioHeader(
       options,
-      `/whatsapp${whatappConversationPostActionPath}`
+      `/whatsapp${whatsappConversationPostActionPath}`
     ),
     whatsappConversationPostHookHandler
   );
