@@ -304,7 +304,7 @@ export class WhatsappService extends AbstractNotificationService {
     >,
     attachmentGenerator: any
   ): Promise<{ to: string; status: string; data: Record<string, unknown> }> {
-    const { sender, receiver, message, ...rest } = data;
+    const { sender, receiver, message, contentSid, parameters, ...rest } = data;
     let messageExtraData;
     if (!sender || !receiver) {
       return;
@@ -312,10 +312,19 @@ export class WhatsappService extends AbstractNotificationService {
     if (!message) {
       messageExtraData = await this.fetchData(event, data, attachmentGenerator);
     }
-
-    const msg = message ?? JSON.stringify(messageExtraData);
-    await this.sendTextMessage(sender, receiver, msg);
-
+    let msg: string;
+    if (data.contentSid) {
+      const result = await this.sendContentTemplate({
+        messageId: data.sender + `${Date.now()}`,
+        to: receiver,
+        contentSid: contentSid as string,
+        parameters: parameters as Record<string, string>,
+      });
+      msg = result.body;
+    } else {
+      msg = message ?? JSON.stringify(messageExtraData);
+      await this.sendTextMessage(sender, receiver, msg);
+    }
     return {
       to: data.sender,
       status: "200",
@@ -1579,7 +1588,10 @@ export class WhatsappService extends AbstractNotificationService {
     };
     const participants = await this.twilioClient.conversations.v1
       .conversations(conversationId)
-      .participants.list();
+      .participants.list({
+        limit: 20,
+        pageSize: 20,
+      });
     const agent = participants.find(
       (p) =>
         p.messagingBinding.address == messageBinding.address &&

@@ -90,7 +90,7 @@ export default (
     },
     bodyParser.text(),
     bodyParser.urlencoded(),
-    bodyParser.json(),
+    
     bodyParser.json(),
     middlewares.verifyTwilioHeader(
       options,
@@ -111,7 +111,7 @@ export default (
     },
     bodyParser.text(),
     bodyParser.urlencoded(),
-    bodyParser.json(),
+    
     bodyParser.json(),
     middlewares.verifyTwilioHeader(
       options,
