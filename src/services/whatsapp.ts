@@ -250,13 +250,19 @@ export class WhatsappService extends AbstractNotificationService {
    * @returns
    */
 
-  async sendTextMessage(
-    sender: string,
-    receiver: string,
-    message: string,
-    otherOptions?: MessageListInstanceCreateOptions,
-    error?: ErrorCallBack
-  ): Promise<MessageInstance> {
+  async sendTextMessage({
+    message,
+    receiver,
+    sender,
+    otherOptions,
+    error,
+  }: {
+    sender: string;
+    receiver: string;
+    message?: string;
+    otherOptions?: Partial<MessageListInstanceCreateOptions>;
+    error?: ErrorCallBack;
+  }): Promise<MessageInstance> {
     let quickResponse: Record<string, any>;
     try {
       quickResponse = JSON.parse(message);
@@ -272,12 +278,14 @@ export class WhatsappService extends AbstractNotificationService {
     }
     const basicRequest = {
       from: `whatsapp:${sender}`,
-      body: `${message}`,
+
       to: `whatsapp:${receiver}`,
     };
-    if (quickResponse) {
-      delete basicRequest.body;
+
+    if (message) {
+      basicRequest["body"] = message;
     }
+
     const request = otherOptions
       ? {
           ...otherOptions,
@@ -323,7 +331,7 @@ export class WhatsappService extends AbstractNotificationService {
       msg = result.body;
     } else {
       msg = message ?? JSON.stringify(messageExtraData);
-      await this.sendTextMessage(sender, receiver, msg);
+      await this.sendTextMessage({ sender, receiver, message: msg });
     }
     return {
       to: data.sender,
@@ -342,11 +350,11 @@ export class WhatsappService extends AbstractNotificationService {
       from: config.from || notification.from,
     };
 
-    await this.sendTextMessage(
-      sendOptions.data.sender,
-      sendOptions.data.receiver,
-      sendOptions.data.message
-    );
+    await this.sendTextMessage({
+      sender: sendOptions.data.sender,
+      receiver: sendOptions.data.receiver,
+      message: sendOptions.data.message,
+    });
 
     const data = {
       sender: sendOptions.data.sender,
@@ -1463,20 +1471,23 @@ export class WhatsappService extends AbstractNotificationService {
     parameters: Record<string, string>;
     contentSid: string;
   }): Promise<MessageInstance> {
-    const stringMessage = JSON.stringify(
-      this.createTemplatedMessage({
-        messageId,
-        to,
-        parameters,
-        contentSid,
-      })
-    );
+    // const stringMessage = JSON.stringify(
+    //   this.createTemplatedMessage({
+    //     messageId,
+    //     to,
+    //     parameters,
+    //     contentSid,
+    //   })
+    // );
     try {
-      const phoneResult = await this.sendTextMessage(
-        process.env.TWILIO_WHATSAPP_NUMBER,
-        to,
-        stringMessage
-      );
+      const phoneResult = await this.sendTextMessage({
+        sender: process.env.TWILIO_WHATSAPP_NUMBER,
+        receiver: to,
+        otherOptions: {
+          contentSid: contentSid,
+          contentVariables: JSON.stringify(parameters),
+        },
+      });
       return phoneResult;
     } catch (e) {
       this.logger_.error(`unable to send message ${e.message}`);
