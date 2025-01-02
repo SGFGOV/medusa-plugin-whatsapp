@@ -72,19 +72,19 @@ describe("WhatsappService", () => {
       const sender = TEST_TWILIO_SANDBOX_NUMBER;
       const receiver = TEST_RECEIVER_NUMBER; /* sandbox member number */
       const message = TEST_MESSAGE;
-      const result = await myWhatsappService.sendTextMessage(
-        sender,
-        receiver,
-        message,
-        undefined,
-        (error, done) => {
+      const result = await myWhatsappService.sendTextMessage({
+        sender: sender,
+        receiver: receiver,
+        message: message,
+        otherOptions: undefined,
+        error: (error, done) => {
           if (error) {
             console.log(error);
           } else {
             return done;
           }
-        }
-      );
+        },
+      });
       expect(result).toBeDefined();
     });
     it("initiate-sandbox-qr", async () => {
@@ -100,12 +100,12 @@ describe("WhatsappService", () => {
         }),
       });
 
-      const result = await myWhatsappService.sendTextMessage(
+      const result = await myWhatsappService.sendTextMessage({
         sender,
         receiver,
         message,
-        undefined,
-        (error, done) => {
+        otherOptions: undefined,
+        error: (error, done) => {
           if (error) {
             console.log(error);
           } else {
@@ -113,8 +113,8 @@ describe("WhatsappService", () => {
 
             return done;
           }
-        }
-      );
+        },
+      });
       expect(result).toBeDefined();
     });
   });
